@@ -297,21 +297,27 @@ export default function Footer() {
               </div>
 
               {/* Enamad Image in Circular Badge */}
-              <div className="mt-0">
-                <a
-                  referrerPolicy="origin"
-                  target="_blank"
-                  href="https://trustseal.enamad.ir/?id=638123&Code=eBxB35o8ufkW2EgjTfb1UJlE4FxRgffQ"
-                >
-                  <Image
-                    src="/icons/enamad.png"
-                    alt="enamad"
-                    width={120}
-                    height={40}
-                    className="w-[100px] h-auto sm:w-[120px] object-contain"
-                  />
-                </a>
-              </div>
+              {/* <div
+                className="mt-2"
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  backgroundColor: "#ffffff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                <Image
+                  src="/images/enamad.png"
+                  width={44}
+                  height={44}
+                  alt="Enamad"
+                  className="object-contain"
+                />
+              </div> */}
             </div>
 
             {/* Telegram Bot Button */}
