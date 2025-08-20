@@ -38,8 +38,23 @@ export default function Header() {
                 priority
               />
             </Link>
+          
           </div>
-
+          <div className="mt-0">
+              <a
+                referrerPolicy="origin"
+                target="_blank"
+                href="https://trustseal.enamad.ir/?id=638123&Code=eBxB35o8ufkW2EgjTfb1UJlE4FxRgffQ"
+              >
+                <Image
+                  src="/icons/enamad.png"
+                  alt="enamad"
+                  width={80}
+                  height={40}
+                  className="w-[100px] h-auto sm:w-[120px] object-contain"
+                />
+              </a>
+            </div>
           {/* Search Bar - Centered on desktop */}
           <div className="hidden md:block flex-1 max-w-2xl mx-8">
             <Search />

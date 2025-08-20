@@ -279,7 +279,7 @@ export default function Footer() {
                   </svg>
                 </a>
                 {/* Enamad Badge */}
-                {/* <div className="mt-2">
+                <div className="mt-2">
                   <a
                     referrerPolicy="origin"
                     target="_blank"
@@ -293,7 +293,7 @@ export default function Footer() {
                       className="w-[100px] h-auto sm:w-[120px] object-contain"
                     />
                   </a>
-                </div> */}
+                </div>
               </div>
 
               {/* Enamad Image in Circular Badge */}
