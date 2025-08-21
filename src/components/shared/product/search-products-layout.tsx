@@ -127,6 +127,44 @@ export default function SearchProductsLayout({
       return items.filter((p) => {
         const haystack =
           `${p.title || ""} ${p.originalTitle || ""} ${p.description || ""} ${p.originalDescription || ""}`.toLowerCase();
+
+        // Filter out women's underwear products (Persian, English, Turkish)
+        const underwearKeywords = [
+          // Persian
+          "لباس زیر زنانه",
+          "سوتین",
+          "کولوت",
+          "شورت زنانه",
+          "پوشاک زیر",
+          "لینجری",
+          // English
+          "bra",
+          "panties",
+          "underwear",
+          "lingerie",
+          "slip",
+          "thong",
+          "g-string",
+          "briefs",
+          "bikini",
+          "swimwear",
+          // Turkish
+          "sütyen",
+          "külot",
+          "pamuklu",
+          "iç çamaşırı",
+          "mayo",
+          "bikini",
+          "plaj giyim",
+          "gece elbisesi",
+          "gece kıyafeti",
+        ];
+
+        // Check if product contains underwear keywords - if yes, exclude it
+        if (underwearKeywords.some((keyword) => haystack.includes(keyword))) {
+          return false;
+        }
+
         return !EXCLUDED_ELECTRONICS_KEYWORDS.some((kw: string) =>
           haystack.includes(kw.toLowerCase())
         );

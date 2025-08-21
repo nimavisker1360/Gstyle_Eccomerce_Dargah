@@ -66,3 +66,24 @@ export async function PUT(req: NextRequest) {
     );
   }
 }
+
+export async function DELETE() {
+  try {
+    await connectToDatabase();
+    const session = await auth();
+    if (!session?.user?.id)
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+
+    // Clear the user's cart from the server
+    await Cart.findOneAndDelete({ user: session.user.id });
+    return NextResponse.json({ success: true, message: "Cart cleared" });
+  } catch (e) {
+    return NextResponse.json(
+      { success: false, error: "Failed to clear cart" },
+      { status: 500 }
+    );
+  }
+}

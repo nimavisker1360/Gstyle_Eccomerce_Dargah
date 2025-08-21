@@ -45,12 +45,17 @@ export default function UserButtonClient() {
 
   const handleSignOut = async () => {
     try {
-      // Prevent CartSync from overwriting server cart with an empty cart during logout
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("skipCartSyncOnce", "true");
-      }
       // Clear cart locally so badge shows 0 immediately and persisted store resets
       clearCart();
+
+      // Also clear the server cart
+      try {
+        await fetch("/api/cart", {
+          method: "DELETE",
+        });
+      } catch (e) {
+        // Ignore server cart clearing errors during logout
+      }
     } catch (e) {}
     await signOut({ callbackUrl: "/" });
   };

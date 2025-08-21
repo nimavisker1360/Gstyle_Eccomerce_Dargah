@@ -6,7 +6,7 @@ import Menu from "./menu";
 import data from "@/lib/data";
 import Search from "./search";
 import CartButton from "./cart-button";
-import UserButton from "./user-button";
+import UserButtonClient from "./user-button-client";
 import FashionDropdown from "./fashion-dropdown";
 import BeautyDropdown from "./beauty-dropdown";
 import SportsDropdown from "./sports-dropdown";
@@ -23,8 +23,8 @@ export default function Header() {
       {/* Top Row - Main Header */}
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
-          {/* Logo - Left side */}
-          <div className="flex items-center">
+          {/* Logo and eNAMAD - Left side */}
+          <div className="flex flex-row items-center gap-2 md:gap-4 flex-shrink-0">
             <Link
               href="/"
               className="flex items-center header-button font-semibold text-xl"
@@ -34,13 +34,13 @@ export default function Header() {
                 width={120}
                 height={40}
                 alt="Logo"
-                className="w-[100px] h-auto sm:w-[120px] object-contain"
+                className="w-[100px] h-auto sm:w-[120px] md:w-[140px] object-contain"
                 priority
               />
             </Link>
-          
-          </div>
-          <div className="mt-0">
+
+            {/* eNAMAD Logo - Beside Gstyle on mobile and desktop */}
+            <div>
               <a
                 referrerPolicy="origin"
                 target="_blank"
@@ -51,10 +51,11 @@ export default function Header() {
                   alt="enamad"
                   width={80}
                   height={40}
-                  className="w-[100px] h-auto sm:w-[120px] object-contain"
+                  className="w-[80px] h-auto sm:w-[80px] md:w-[100px] object-contain"
                 />
               </a>
             </div>
+          </div>
           {/* Search Bar - Centered on desktop */}
           <div className="hidden md:block flex-1 max-w-2xl mx-8">
             <Search />
@@ -67,7 +68,7 @@ export default function Header() {
             </span>
             <div className="flex items-center gap-4">
               <CartButton />
-              <UserButton />
+              <UserButtonClient />
             </div>
           </div>
 
@@ -78,7 +79,7 @@ export default function Header() {
             </span>
             <div className="flex items-center gap-4">
               <CartButton />
-              <UserButton />
+              <UserButtonClient />
             </div>
           </div>
         </div>

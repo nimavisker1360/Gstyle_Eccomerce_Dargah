@@ -116,6 +116,47 @@ function filterOutComputersAndLaptops(product: any): boolean {
   const title = product.title?.toLowerCase() || "";
   const description = product.description?.toLowerCase() || "";
 
+  // Filter out women's underwear products (Persian, English, Turkish)
+  const underwearKeywords = [
+    // Persian
+    "لباس زیر زنانه",
+    "سوتین",
+    "کولوت",
+    "شورت زنانه",
+    "پوشاک زیر",
+    "لینجری",
+    // English
+    "bra",
+    "panties",
+    "underwear",
+    "lingerie",
+    "slip",
+    "thong",
+    "g-string",
+    "briefs",
+    "bikini",
+    "swimwear",
+    // Turkish
+    "sütyen",
+    "külot",
+    "pamuklu",
+    "iç çamaşırı",
+    "mayo",
+    "bikini",
+    "plaj giyim",
+    "gece elbisesi",
+    "gece kıyafeti",
+  ];
+
+  // Check if product contains underwear keywords - if yes, exclude it
+  if (
+    underwearKeywords.some(
+      (keyword) => title.includes(keyword) || description.includes(keyword)
+    )
+  ) {
+    return false;
+  }
+
   // Keywords that indicate complete laptops or computers (not accessories)
   const computerKeywords = [
     "laptop bilgisayar",

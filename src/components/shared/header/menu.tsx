@@ -1,10 +1,10 @@
 import CartButton from "./cart-button";
-import UserButton from "./user-button";
+import UserButtonClient from "./user-button-client";
 
 export default function Menu() {
   return (
     <div className="flex items-center gap-6">
-      <UserButton />
+      <UserButtonClient />
       <CartButton />
     </div>
   );

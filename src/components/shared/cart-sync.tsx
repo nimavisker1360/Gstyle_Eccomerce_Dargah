@@ -11,43 +11,40 @@ export default function CartSync() {
   const isFetchingRef = useRef(false);
   const lastSyncedRef = useRef<string>("");
 
-  // Load server cart once after login
+  // Load server cart when user logs in
   useEffect(() => {
     const load = async () => {
       if (status !== "authenticated") return;
-      if (hasHydratedRef.current || isFetchingRef.current) return;
+      if (isFetchingRef.current) return;
       isFetchingRef.current = true;
       try {
         const res = await fetch("/api/cart", { cache: "no-store" });
         const json = await res.json();
         const server = json?.data ?? null;
         const serverItems = Array.isArray(server?.items) ? server.items : [];
-        // Prefer server cart when available to avoid double-counting on refresh.
-        // If server is empty, keep the existing local cart as-is.
-        const normalized = serverItems.length
-          ? {
-              items: serverItems,
-              itemsPrice: server?.itemsPrice ?? 0,
-              taxPrice: server?.taxPrice ?? undefined,
-              shippingPrice: server?.shippingPrice ?? undefined,
-              totalPrice: server?.totalPrice ?? 0,
-              paymentMethod: server?.paymentMethod ?? undefined,
-              shippingAddress: server?.shippingAddress ?? undefined,
-              deliveryDateIndex: server?.deliveryDateIndex ?? undefined,
-            }
-          : cart;
+
+        // Always load server cart when user logs in
+        const normalized = {
+          items: serverItems,
+          itemsPrice: server?.itemsPrice ?? 0,
+          taxPrice: server?.taxPrice ?? undefined,
+          shippingPrice: server?.shippingPrice ?? undefined,
+          totalPrice: server?.totalPrice ?? 0,
+          paymentMethod: server?.paymentMethod ?? undefined,
+          shippingAddress: server?.shippingAddress ?? undefined,
+          deliveryDateIndex: server?.deliveryDateIndex ?? undefined,
+        };
 
         replaceCart(normalized);
         lastSyncedRef.current = JSON.stringify(normalized);
 
-        // Persist merged cart immediately so it stays after logout/login
+        // Persist cart immediately so it stays after logout/login
         await fetch("/api/cart", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(normalized),
         }).catch(() => {});
       } finally {
-        hasHydratedRef.current = true;
         isFetchingRef.current = false;
       }
     };
@@ -57,14 +54,6 @@ export default function CartSync() {
   // Persist cart on any change while logged in
   useEffect(() => {
     if (status !== "authenticated") return;
-    if (!hasHydratedRef.current) return;
-    if (
-      typeof window !== "undefined" &&
-      sessionStorage.getItem("skipCartSyncOnce")
-    ) {
-      sessionStorage.removeItem("skipCartSyncOnce");
-      return;
-    }
     const payload = JSON.stringify(cart);
     if (payload === lastSyncedRef.current) return;
     lastSyncedRef.current = payload;
