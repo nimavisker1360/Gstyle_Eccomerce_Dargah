@@ -52,7 +52,7 @@ export default function Search() {
       />
       <button
         type="submit"
-        className="bg-green-600 hover:bg-green-700 text-white rounded-r-lg rounded-l-none h-full px-6 py-2 transition-colors"
+        className="bg-green-600 hover:bg-green-700 text-white rounded-r-lg rounded-l-none h-full px-6 py-2 transition-colors flex items-center justify-center"
       >
         <SearchIcon className="w-5 h-5" />
       </button>
