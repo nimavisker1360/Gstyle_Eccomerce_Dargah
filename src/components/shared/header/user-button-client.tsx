@@ -165,10 +165,10 @@ export default function UserButtonClient() {
 
               <DropdownMenuItem
                 onClick={handleSignOut}
-                className="flex items-center justify-between gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 cursor-pointer"
+                className="flex items-center justify-between gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 cursor-pointer"
               >
                 <span>خروج</span>
-                <LogOut className="w-3 h-3 text-green-600" />
+                <LogOut className="w-3 h-3 text-red-600" />
               </DropdownMenuItem>
             </div>
           </DropdownMenuContent>

@@ -745,12 +745,15 @@ export default function SearchProductsLayout({
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                نتایج جستجو برای:
-              </h2>
             </div>
-            <div className="flex items-center">
-              <span className="text-lg font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500">
+            <div className="flex items-center gap-3">
+              <Link href="/">
+                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm border border-blue-500 transition-colors duration-200 text-sm font-medium flex items-center gap-2 w-32 justify-center">
+                  صفحه اصلی
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </Link>
+              <span className="text-sm font-semibold text-white bg-green-600 px-4 py-2 rounded-lg shadow-sm border border-green-500 w-32 text-center">
                 {getDisplayText(currentSearch)}
               </span>
             </div>

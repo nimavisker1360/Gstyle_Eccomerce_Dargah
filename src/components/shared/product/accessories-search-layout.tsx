@@ -117,9 +117,17 @@ export default function AccessoriesSearchLayout({
     return (
       <div className="w-full">
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            نتایج جستجو برای &quot;{currentSearch}&quot;
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <Link href="/">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm border border-blue-500 transition-colors duration-200 text-sm font-medium flex items-center gap-2 w-32 justify-center">
+                صفحه اصلی
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </Link>
+            <h2 className="text-sm font-semibold text-gray-800 w-32 text-center">
+              نتایج جستجو برای &quot;{currentSearch}&quot;
+            </h2>
+          </div>
           <p className="text-sm text-gray-600">
             {products.length} لوازم جانبی پیدا شد
           </p>
