@@ -133,6 +133,13 @@
   * {
     @apply border-border;
   }
+
+  html,
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family:
@@ -244,6 +251,132 @@
   textarea,
   select {
     font-size: 16px !important;
+  }
+
+  /* Prevent horizontal scrolling on mobile */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  /* Ensure all containers respect mobile width */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Make dropdowns responsive on mobile */
+  .dropdown-menu {
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem) !important;
+    left: 1rem !important;
+    right: 1rem !important;
+  }
+
+  /* Ensure all images and media respect mobile width */
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent table overflow on mobile */
+  table {
+    min-width: auto;
+    max-width: 100%;
+  }
+
+  /* Ensure proper mobile grid behavior */
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  }
+
+  /* Specific grid improvements for product grids */
+  .grid.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .grid.grid-cols-2.sm\\:grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid.lg\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid.xl\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid.2xl\\:grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Ensure viewport is respected */
+  .container,
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl,
+  .max-w-2xl,
+  .max-w-xl,
+  .max-w-lg,
+  .max-w-md,
+  .max-w-sm {
+    max-width: calc(100vw - 2rem) !important;
+    margin-left: 1rem !important;
+    margin-right: 1rem !important;
+  }
+
+  /* Ensure product cards don't overflow on mobile */
+  .card,
+  [class*="card"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Ensure proper spacing for product grids */
+  .grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  /* Force all flex containers to respect mobile width */
+  .flex,
+  .flex-row,
+  .flex-col {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  /* Ensure buttons and interactive elements don't cause overflow */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+
+  /* Ensure proper mobile padding */
+  .p-4,
+  .px-4,
+  .py-4 {
+    padding: 1rem;
+  }
+
+  .p-6,
+  .px-6,
+  .py-6 {
+    padding: 1.5rem;
   }
 }
 

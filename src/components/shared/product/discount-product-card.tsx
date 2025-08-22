@@ -113,7 +113,7 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
   };
 
   return (
-    <Card className="w-full max-w-[280px] hover:shadow-lg transition-shadow duration-200 bg-white">
+    <Card className="w-full hover:shadow-lg transition-shadow duration-200 bg-white">
       <CardContent className="p-4">
         {/* Product Image with Discount Badge */}
         <div className="relative mb-3">

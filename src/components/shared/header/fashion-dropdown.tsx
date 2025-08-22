@@ -180,7 +180,7 @@ export default function FashionDropdown() {
             : "opacity-0 invisible transform -translate-y-2 scale-95 pointer-events-none"
         }`}
       >
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[900px] p-4">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[900px] md:w-[900px] w-full max-w-[calc(100vw-2rem)] p-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>

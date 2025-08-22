@@ -116,7 +116,7 @@ export default function ShoppingProductCard({
 
   return (
     <Card
-      className={`w-full max-w-[220px] hover:shadow-lg transition-shadow duration-200 ${
+      className={`w-full hover:shadow-lg transition-shadow duration-200 ${
         isSearchResult ? "border-2 border-green-500 shadow-green-100" : ""
       }`}
     >

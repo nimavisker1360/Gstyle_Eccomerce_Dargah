@@ -81,7 +81,7 @@ export default function UserButtonClient() {
           <button
             type="button"
             aria-label={session ? "منوی حساب کاربری" : "ورود به حساب"}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 shadow-sm transition-colors overflow-hidden"
+            className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 shadow-sm transition-colors overflow-hidden"
           >
             {session && userAvatar ? (
               <Image
@@ -118,7 +118,7 @@ export default function UserButtonClient() {
                 </Button>
                 <div className="flex items-center gap-3">
                   {userAvatar && (
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-200">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border-2 border-green-200">
                       <Image
                         src={userAvatar}
                         alt="avatar"

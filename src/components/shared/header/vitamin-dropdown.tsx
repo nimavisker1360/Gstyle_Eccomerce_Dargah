@@ -153,7 +153,7 @@ export default function VitaminDropdown() {
             : "opacity-0 invisible transform -translate-y-2 scale-95 pointer-events-none"
         }`}
       >
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-[420px] max-w-[95vw] p-4">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-xl w-full max-w-[calc(100vw-2rem)] md:w-[420px] p-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-4">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>

@@ -212,7 +212,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
           <div className="mb-2 rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 sm:px-3">
             <p
               dir="ltr"
-              className="text-[11px] sm:text-xs md:text-sm  text-blue-600 text-right flex flex-nowrap items-center justify-end gap-1 sm:gap-2 leading-6 whitespace-nowrap overflow-x-auto "
+              className="text-[11px] sm:text-xs md:text-sm  text-blue-600 text-right flex flex-nowrap items-center justify-end gap-1 sm:gap-2 leading-6 whitespace-nowrap overflow-hidden"
             >
               کلیک کنید تا محصول به سبد خرید انتقال داده بشه
               <span
@@ -246,7 +246,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
         </div>
 
         {/* Static Grid with same breakpoints as "مشاهده بیشتر" صفحه */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-3 sm:gap-4">
           {products.slice(0, 8).map((product, index) => (
             <div key={`${product.id}-${index}`}>
               <DiscountProductCard product={product} />
