@@ -7,6 +7,9 @@ import { HomeBanner } from "@/components/shared/home/home-banner";
 import DiscountProductsGrid from "@/components/shared/product/discount-products-grid";
 import SearchSidebar from "@/components/shared/product/search-sidebar";
 import MobileFilterButton from "@/components/shared/product/mobile-filter-button";
+import { Button } from "@/components/ui/button";
+import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 interface SearchPageProps {
   searchParams: {
@@ -129,13 +132,44 @@ function DiscountProductsContent({ searchQuery }: { searchQuery?: string }) {
 
         <div className="mb-8">
           <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 shadow-lg border border-green-400">
-            <div className="text-white text-center">
-              <h2 className="text-lg font-bold mb-2">
+            <div className="text-white text-right">
+              <h2 className="text-lg font-bold mb-2 text-right">
                 محصولات زیر ۶ میلیون تومان
               </h2>
-              <p className="text-green-100">
+              <p className="text-green-100 mb-4 text-right">
                 بهترین پیشنهادات و تخفیف‌های ویژه برای شما
               </p>
+
+              {/* بنر آبی با متن سفارش محصول */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-4">
+                <p
+                  className="text-[10px]  sm:text-xs text-blue-600 leading-tight text-left flex items-center gap-2"
+                  dir="rtl"
+                >
+                  <span>برای سفارش محصول روی</span>
+                  <span className="inline-flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 text-white text-xs font-bold">
+                    +
+                  </span>
+                  <span>کلیک کنید تا محصول به سبد خرید اضافه بشه</span>
+                </p>
+              </div>
+
+              {/* دکمه‌های عملیات */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-start items-center w-full">
+                {/* دکمه صفحه اصلی - فقط در موبایل */}
+                <div className="block sm:hidden self-start">
+                  <Link href="/">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2 text-white border-blue-600 hover:bg-blue-700 bg-blue-600 text-xs px-3 py-2"
+                    >
+                      صفحه اصلی
+                      <ChevronRight className="w-3 h-3" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>

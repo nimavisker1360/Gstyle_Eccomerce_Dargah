@@ -122,7 +122,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
       <div className="w-full bg-white">
         {/* Section Header */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl text-green-600 text-left hidden">
+          <h2 className="text-sm sm:text-xl text-green-600 text-left hidden">
             محصولات زیر ۶ میلیون تومان
           </h2>
         </div>
@@ -173,7 +173,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
     return (
       <div className="w-full bg-white">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-800 text-right">
+          <h2 className="text-sm sm:text-lg font-bold text-gray-800 text-right">
             محصولات زیر ۶ میلیون تومان
           </h2>
         </div>
@@ -192,7 +192,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
     return (
       <div className="w-full bg-white">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-gray-800 text-right">
+          <h2 className="text-sm sm:text-lg font-bold text-gray-800 text-right">
             محصولات زیر ۶ میلیون تومان
           </h2>
         </div>
@@ -208,11 +208,11 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
       {/* Box container to keep header and grid inside */}
       <div className="border-2 border-gray-300 rounded-xl p-4 md:p-6 bg-white/50 shadow-md">
         {/* Section Header aligned right with green bold title */}
-        <div className="relative mb-2">
-          <div className="mb-2 rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 sm:px-3">
+        <div className="relative mb-4 sm:mb-2">
+          <div className="mb-3 sm:mb-2 rounded-lg border border-blue-200 bg-blue-50 px-2 py-2 sm:px-3">
             <p
               dir="ltr"
-              className="text-[11px] sm:text-xs md:text-sm  text-blue-600 text-right flex flex-nowrap items-center justify-end gap-1 sm:gap-2 leading-6 whitespace-nowrap overflow-hidden"
+              className="text-[8px] sm:text-xs md:text-sm text-blue-600 text-right flex flex-nowrap items-center justify-end gap-1 sm:gap-2 leading-4 sm:leading-6 whitespace-nowrap overflow-hidden"
             >
               کلیک کنید تا محصول به سبد خرید انتقال داده بشه
               <span
@@ -220,7 +220,7 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
                 className="inline-flex items-center gap-1 whitespace-nowrap "
               >
                 روی
-                <span className="inline-flex items-center justify-center w-5 h-5 md:w-6 md:h-6 rounded-full bg-green-500 text-white">
+                <span className="inline-flex items-center justify-center w-3 h-3 sm:w-5 sm:h-5 md:w-6 md:h-6 rounded-full bg-green-500 text-white">
                   +
                 </span>
               </span>
@@ -228,17 +228,19 @@ export default function LatestDiscountsSlider({}: LatestDiscountsSliderProps) {
             </p>
           </div>
           <div className="flex items-center justify-end">
-            <h2 className="text-lg md:text-xl font-extrabold text-green-600 text-right">
+            <h2 className="text-sm sm:text-lg md:text-xl font-extrabold text-green-600 text-right">
               محصولات زیر ۶ میلیون تومان
             </h2>
-            <div className="absolute left-0">
+            <div className="absolute left-0 flex flex-col gap-2">
+              {/* دکمه بیشتر ببینید */}
               <Link href="/search?discount=true">
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2 text-green-600 border-green-600 hover:bg-green-50"
+                  size="sm"
+                  className="flex items-center gap-1 sm:gap-2 text-green-600 border-green-600 hover:bg-green-50 text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-2"
                 >
                   بیشتر ببینید
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Button>
               </Link>
             </div>

@@ -77,7 +77,7 @@ export default function Header() {
             <span className="text-xs text-green-600 leading-none">
               ارسال رایگان به سراسر کشور
             </span>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <CartButton />
               <UserButtonClient />
             </div>

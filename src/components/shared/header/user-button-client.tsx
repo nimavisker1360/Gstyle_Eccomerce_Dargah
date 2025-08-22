@@ -81,7 +81,7 @@ export default function UserButtonClient() {
           <button
             type="button"
             aria-label={session ? "منوی حساب کاربری" : "ورود به حساب"}
-            className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 shadow-sm transition-colors overflow-hidden"
+            className="flex items-center justify-center w-9 h-9 sm:w-8 sm:h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 shadow-sm transition-colors overflow-hidden"
           >
             {session && userAvatar ? (
               <Image
@@ -92,7 +92,7 @@ export default function UserButtonClient() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <User className="h-4 w-4" />
+              <User className="h-5 w-5 sm:h-4 sm:w-4" />
             )}
           </button>
         </DropdownMenuTrigger>
@@ -116,14 +116,14 @@ export default function UserButtonClient() {
                     className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`}
                   />
                 </Button>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4 sm:gap-3">
                   {userAvatar && (
-                    <div className="w-10 h-10 rounded-lg overflow-hidden border-2 border-green-200">
+                    <div className="w-12 h-12 sm:w-10 sm:h-10 rounded-lg overflow-hidden border-2 border-green-200">
                       <Image
                         src={userAvatar}
                         alt="avatar"
-                        width={40}
-                        height={40}
+                        width={48}
+                        height={48}
                         className="w-full h-full object-cover"
                       />
                     </div>
