@@ -24,7 +24,7 @@ export default function Header() {
       <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200 shadow-[0_2px_6px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo and eNAMAD - Left side */}
-          <div className="flex flex-row items-center gap-2 md:gap-4 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row items-center gap-0.5 md:gap-4 flex-shrink-0">
             <Link
               href="/"
               className="flex items-center header-button font-semibold text-xl"
@@ -39,7 +39,7 @@ export default function Header() {
               />
             </Link>
 
-            {/* eNAMAD Logo - Beside Gstyle on mobile and desktop */}
+            {/* eNAMAD Logo - Below Gstyle on mobile, beside on larger screens */}
             <div>
               <a
                 referrerPolicy="origin"
@@ -51,13 +51,13 @@ export default function Header() {
                   alt="enamad"
                   width={80}
                   height={40}
-                  className="w-[80px] h-auto sm:w-[80px] md:w-[100px] object-contain"
+                  className="w-[80px] h-auto sm:w-[80px] md:w-[80px] object-contain"
                 />
               </a>
             </div>
           </div>
           {/* Search Bar - Centered on desktop */}
-          <div className="hidden md:block flex-1 max-w-2xl mx-8">
+          <div className="hidden md:block flex-1 max-w-2xl mx-8 ">
             <Search />
           </div>
 
