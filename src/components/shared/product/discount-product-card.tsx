@@ -10,12 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import useCartStore from "@/hooks/use-cart-store";
-import {
-  generateId,
-  round2,
-  convertTRYToToman,
-  formatToman,
-} from "@/lib/utils";
+import { convertTRYToRial, formatRial, generateId, round2 } from "@/lib/utils";
 
 interface ShoppingProduct {
   id: string;
@@ -46,15 +41,14 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Price computations
-  const displayedPriceToman = convertTRYToToman(product.price);
+  const displayedPriceRial = convertTRYToRial(product.price);
   const basePrice: number | null =
     typeof product.previousPrice === "number" && product.previousPrice > 0
       ? product.previousPrice
       : typeof product.originalPrice === "number" && product.originalPrice > 0
         ? product.originalPrice
         : null;
-  const basePriceToman =
-    basePrice !== null ? convertTRYToToman(basePrice) : null;
+  const basePriceRial = basePrice !== null ? convertTRYToRial(basePrice) : null;
   const hasDiscount =
     typeof basePrice === "number" && basePrice > product.price;
   const discountPercent = hasDiscount
@@ -181,15 +175,15 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
           <span className="text-xs text-gray-500">({product.reviews})</span>
         </div>
 
-        {/* Price column: old (Rial) above, new (Toman) below */}
+        {/* Price column: old (Rial) above, new (Rial) below */}
         <div className="flex flex-col items-end text-right gap-1">
-          {hasDiscount && basePriceToman !== null && (
+          {hasDiscount && basePriceRial !== null && (
             <span className="text-xs md:text-sm text-gray-500 line-through tabular-nums">
-              {formatToman(basePriceToman)}
+              {formatRial(basePriceRial)}
             </span>
           )}
           <span className="text-sm md:text-base font-medium text-red-600 tabular-nums">
-            {formatToman(displayedPriceToman)}
+            {formatRial(displayedPriceRial)}
           </span>
         </div>
         {/* Delivery text removed as requested */}

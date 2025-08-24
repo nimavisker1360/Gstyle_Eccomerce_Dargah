@@ -10,12 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import useCartStore from "@/hooks/use-cart-store";
 import Image from "next/image";
-import {
-  generateId,
-  round2,
-  convertTRYToToman,
-  formatToman,
-} from "@/lib/utils";
+import { convertTRYToRial, formatRial, generateId, round2 } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -194,12 +189,11 @@ export default function IntelligentSearch({
     }
   }, [initialQuery, handleSearch]);
 
-  const formatPriceToman = (price: number, currency: string) => {
-    const isTRY =
-      (currency || "").toUpperCase() === "TRY" ||
-      (currency || "").toUpperCase() === "TL";
-    const tryAmount = isTRY ? price : price;
-    return formatToman(convertTRYToToman(tryAmount));
+  const safeFormatRial = (tryAmount: number | undefined | null): string => {
+    if (tryAmount === undefined || tryAmount === null) {
+      return formatRial(0);
+    }
+    return formatRial(convertTRYToRial(tryAmount));
   };
 
   const handleAddToCart = (product: Product) => {
@@ -418,7 +412,7 @@ export default function IntelligentSearch({
                         {/* Price */}
                         <div className="flex items-center gap-2">
                           <span className="text-lg font-bold text-green-600">
-                            {formatPriceToman(product.price, product.currency)}
+                            {safeFormatRial(product.price)}
                           </span>
                         </div>
 

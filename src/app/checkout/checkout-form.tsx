@@ -382,7 +382,7 @@ const CheckoutForm = () => {
                           type="submit"
                           className="w-full rounded-none md:rounded-lg font-bold bg-green-600 hover:bg-green-700 text-white border-0 py-4 text-base md:py-2 md:text-sm"
                         >
-                          ارسال به پشتیبانی
+                          پرداخت از زرین پال
                         </Button>
                       </CardFooter>
                     </Card>
