@@ -194,30 +194,32 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
         </div>
         {/* Delivery text removed as requested */}
 
-        {/* Action Button - Hide when added to cart */}
-        {!isAddedToCart && (
-          <div className="mt-3">
-            {product.googleShoppingLink ? (
-              <Button
-                className="w-full text-sm bg-blue-600 hover:bg-blue-700 text-white"
-                asChild
+        {/* Action Button - Always visible */}
+        <div className="mt-3">
+          {product.googleShoppingLink ? (
+            <Button
+              className={`w-full text-sm ${
+                isAddedToCart
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-blue-600 hover:bg-blue-700 text-white"
+              }`}
+              asChild
+            >
+              <Link
+                href={product.googleShoppingLink}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <Link
-                  href={product.googleShoppingLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  مشاهده در فروشگاه
-                  {/* <ExternalLink className="w-3 h-3 mr-1" /> */}
-                </Link>
-              </Button>
-            ) : (
-              <Button className="w-full text-sm" disabled>
-                نا موجود
-              </Button>
-            )}
-          </div>
-        )}
+                مشاهده در فروشگاه
+                {/* <ExternalLink className="w-3 h-3 mr-1" /> */}
+              </Link>
+            </Button>
+          ) : (
+            <Button className="w-full text-sm" disabled>
+              نا موجود
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
