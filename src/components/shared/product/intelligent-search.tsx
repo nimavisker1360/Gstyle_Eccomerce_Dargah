@@ -207,7 +207,7 @@ export default function IntelligentSearch({
         quantity: 1,
         countInStock: 10, // Default stock
         image: product.image,
-        price: round2(product.price),
+        price: round2(convertTRYToRial(product.price)),
         size: "متوسط", // Default size
         color: "مشکی", // Default color
       };

@@ -58,7 +58,7 @@ export default function ShoppingProductCard({
         quantity: 1,
         countInStock: 99, // Default stock since shopping products don't have stock info
         image: product.image,
-        price: product.price,
+        price: round2(convertTRYToRial(product.price)),
         size: undefined,
         color: undefined,
       };

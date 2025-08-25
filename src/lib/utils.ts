@@ -76,6 +76,16 @@ export function formatRial(amountInRial: number): string {
   return `${formatted} ریال`;
 }
 
+// ===== Currency: Toman ↔ Rial conversion =====
+// 1 Toman = 10 Rial
+export function tomanToRial(toman: number): number {
+  return toman * 10;
+}
+
+export function rialToToman(rial: number): number {
+  return rial / 10;
+}
+
 export const formatError = (error: any): string => {
   if (error.name === "ZodError") {
     if (!error.errors || typeof error.errors !== "object") {

@@ -21,16 +21,17 @@ import React from "react";
 import { CardDescription } from "@/components/ui/card";
 
 export default function CartPage() {
-  const {
-    cart: { items },
-    updateItem,
-    removeItem,
-    updateItemNote,
-  } = useCartStore();
-  const computedItemsPrice = React.useMemo(
-    () => items.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [items]
-  );
+  const { cart, updateItem, removeItem, updateItemNote } = useCartStore();
+  const { items } = cart;
+  // Calculate total directly from items (same as checkout)
+  const computedItemsPrice =
+    items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+
+  // Debug logging
+  console.log("Cart - Items:", items);
+  console.log("Cart - Computed Items Price:", computedItemsPrice);
+  console.log("Cart - Store Items Price:", cart.itemsPrice);
+
   const router = useRouter();
   return (
     <div>
@@ -163,10 +164,7 @@ export default function CartPage() {
                       <div>
                         <p className="text-right text-blue-700">
                           <span className="font-bold text-lg text-green-700">
-                            <ProductPrice
-                              price={item.price * item.quantity}
-                              plain
-                            />
+                            {(item.price * item.quantity).toLocaleString()} ریال
                           </span>
                         </p>
                       </div>
@@ -177,7 +175,7 @@ export default function CartPage() {
                     جمع کل (
                     {items.reduce((acc, item) => acc + item.quantity, 0)} آیتم):{" "}
                     <span className="font-bold ml-1 text-green-700">
-                      <ProductPrice price={computedItemsPrice} plain />
+                      {computedItemsPrice.toLocaleString()} ریال
                     </span>{" "}
                   </div>
                 </CardContent>
@@ -190,10 +188,10 @@ export default function CartPage() {
                     <div className="flex-1">
                       اضافه کنید{" "}
                       <span className="text-green-700">
-                        <ProductPrice
-                          price={FREE_SHIPPING_MIN_PRICE - computedItemsPrice}
-                          plain
-                        />
+                        {(
+                          FREE_SHIPPING_MIN_PRICE - computedItemsPrice
+                        ).toLocaleString()}{" "}
+                        ریال
                       </span>{" "}
                       از محصولات واجد شرایط به سفارش خود برای ارسال رایگان
                     </div>
@@ -202,7 +200,7 @@ export default function CartPage() {
                     جمع کل (
                     {items.reduce((acc, item) => acc + item.quantity, 0)} آیتم):{" "}
                     <span className="font-bold text-green-700">
-                      <ProductPrice price={computedItemsPrice} plain />
+                      {computedItemsPrice.toLocaleString()} ریال
                     </span>{" "}
                   </div>
                   <Button

@@ -87,7 +87,7 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
         name: product.title,
         slug: product.id,
         category: "تخفیف‌دار",
-        price: round2(priceInTRY),
+        price: round2(convertTRYToRial(priceInTRY)),
         quantity: 1,
         image: product.image,
       };

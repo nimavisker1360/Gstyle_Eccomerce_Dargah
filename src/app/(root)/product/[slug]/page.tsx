@@ -3,7 +3,7 @@ import {
   getProductBySlug,
   getRelatedProductsByCategory,
 } from "@/lib/actions/product.actions";
-import { generateId, round2 } from "@/lib/utils";
+import { generateId, round2, convertTRYToRial } from "@/lib/utils";
 import SelectVariant from "@/components/shared/product/select-variant";
 import ProductPrice from "@/components/shared/product/product-price";
 import ProductGallery from "@/components/shared/product/product-gallery";
@@ -65,7 +65,9 @@ export default async function ProductDetails(props: {
               <p className="p-medium-16 rounded-full bg-grey-500/10   text-grey-500">
                 برند {product.brand} {product.category}
               </p>
-              <h1 className="font-semibold text-lg lg:text-xl text-black">{product.name}</h1>
+              <h1 className="font-semibold text-lg lg:text-xl text-black">
+                {product.name}
+              </h1>
               <div className="flex items-center gap-2">
                 <RatingSummary
                   avgRating={product.avgRating}
@@ -127,7 +129,7 @@ export default async function ProductDetails(props: {
                         name: product.name,
                         slug: product.slug,
                         category: product.category,
-                        price: round2(product.price),
+                        price: round2(convertTRYToRial(product.price)),
                         quantity: 1,
                         image: product.images[0],
                         size: size || product.sizes[0],
