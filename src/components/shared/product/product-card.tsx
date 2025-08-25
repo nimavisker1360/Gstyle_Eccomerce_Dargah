@@ -15,7 +15,7 @@ import {
   formatNumber,
   generateId,
   round2,
-  convertTRYToRial,
+  convertTRYToToman,
 } from "@/lib/utils";
 import ProductPrice from "./product-price";
 import ImageHover from "./image-hover";
@@ -96,7 +96,7 @@ const ProductCard = ({
           name: product.name,
           slug: product.slug,
           category: product.category,
-          price: round2(convertTRYToRial(product.price)),
+          price: round2(convertTRYToToman(product.price)),
           quantity: 1,
           image: product.images[0],
         }}

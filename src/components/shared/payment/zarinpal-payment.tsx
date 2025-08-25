@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { CreditCard, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { tomanToRial, formatRial } from "@/lib/utils";
+import { formatToman } from "@/lib/utils";
+import { formatPersianAmount } from "@/lib/utils/format-persian-numbers";
 
 interface ZarinpalPaymentProps {
   totalAmount: number;
@@ -25,13 +26,14 @@ export default function ZarinpalPayment({
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
   const router = useRouter();
 
   // Debug logging
   console.log("ZarinpalPayment Component - Total Amount:", totalAmount);
 
-  // Convert Toman to Rial for Zarinpal API
-  const amountInRial = tomanToRial(totalAmount);
+  // Use Toman directly for Zarinpal API
+  const amountInToman = totalAmount;
 
   const handlePayment = async () => {
     if (!fullName.trim() || !phoneNumber.trim()) {
@@ -56,20 +58,38 @@ export default function ZarinpalPayment({
       setIsProcessing(true);
       onPaymentStart?.();
 
-      const response = await fetch("/api/payment/request", {
+      console.log("Sending payment request with data:", {
+        amount: amountInToman,
+        description: `پرداخت سفارش ${orderId} - ${fullName}`,
+        orderId: orderId,
+        callbackUrl: `${window.location.origin}/api/payment/zarinpal/verify?orderId=${orderId}`,
+        phoneNumber: phoneNumber,
+        fullName: fullName,
+      });
+
+      const response = await fetch("/api/payment/zarinpal/request", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: amountInRial, // Send amount in Rial to Zarinpal
+          amount: amountInToman, // Send amount in Toman to Zarinpal
           description: `پرداخت سفارش ${orderId} - ${fullName}`,
           orderId: orderId,
-          callbackUrl: `${window.location.origin}/api/payment/verify`,
+          callbackUrl: `${window.location.origin}/api/payment/zarinpal/verify?orderId=${orderId}`,
+          phoneNumber: phoneNumber,
+          fullName: fullName,
         }),
       });
 
+      console.log("Response status:", response.status);
+      console.log(
+        "Response headers:",
+        Object.fromEntries(response.headers.entries())
+      );
+
       const result = await response.json();
+      console.log("Response result:", result);
 
       if (result.success) {
         onPaymentComplete?.();
@@ -96,15 +116,18 @@ export default function ZarinpalPayment({
   };
 
   const formatAmount = (amount: number) => {
-    return amount.toLocaleString() + " ریال";
+    return formatPersianAmount(amount);
   };
 
   return (
     <Card className="w-full">
       <CardHeader className="text-center">
         <CardTitle className="text-xl font-bold text-gray-800">
-          پرداخت از زرین‌پال
+          پرداخت امن از زرین‌پال
         </CardTitle>
+        <p className="text-sm text-gray-600 mt-2">
+          انتقال مستقیم به درگاه بانکی زرین‌پال
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Order Summary */}
@@ -157,7 +180,7 @@ export default function ZarinpalPayment({
         <Button
           onClick={handlePayment}
           disabled={isProcessing || !fullName.trim() || !phoneNumber.trim()}
-          className="w-full bg-green-600 hover:bg-green-700 h-12 text-lg font-medium"
+          className="w-full h-12 text-lg font-medium bg-blue-600 hover:bg-blue-700"
         >
           {isProcessing ? (
             <>

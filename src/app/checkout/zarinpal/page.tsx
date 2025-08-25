@@ -1,159 +1,108 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import ZarinpalPayment from "@/components/shared/payment/zarinpal-payment";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import useCartStore from "@/hooks/use-cart-store";
 
-export default function ZarinpalCheckoutPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [orderId, setOrderId] = useState("");
-  const [isHydrated, setIsHydrated] = useState(false);
+import { useSearchParams } from "next/navigation";
+import ZarinPalCheckout from "@/components/shared/ZarinPalCheckout";
+import { CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
-  // Get cart data from store with safe defaults
-  const cart = useCartStore((state) => state.cart);
-  const {
-    items = [],
-    itemsPrice = 0,
-    shippingPrice = 0,
-    taxPrice = 0,
-    totalPrice = 0,
-  } = cart || {};
+export default function ZarinPalCheckoutPage() {
+  const searchParams = useSearchParams();
+  const status = searchParams.get("status");
+  const authority = searchParams.get("authority");
+  const refId = searchParams.get("refId");
+  const amount = searchParams.get("amount");
+  const error = searchParams.get("error");
 
-  // Ensure cart is hydrated
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (status === "loading") return;
-
-    if (!session?.user) {
-      router.push("/sign-in?callbackUrl=/checkout/zarinpal");
-      return;
+  const renderStatusMessage = () => {
+    if (status === "success") {
+      return (
+        <div className="max-w-md mx-auto mb-8 p-6 bg-green-50 border border-green-200 rounded-lg">
+          <div className="flex items-center">
+            <CheckCircle className="w-8 h-8 text-green-600 ml-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-green-800">
+                پرداخت موفق
+              </h3>
+              <p className="text-green-700 mt-1">
+                پرداخت شما با موفقیت انجام شد
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 space-y-2 text-sm text-green-700">
+            <p>
+              <strong>کد پیگیری:</strong> {refId}
+            </p>
+            <p>
+              <strong>Authority:</strong> {authority}
+            </p>
+            <p>
+              <strong>مبلغ:</strong> {amount} تومان
+            </p>
+          </div>
+        </div>
+      );
     }
 
-    setOrderId(
-      `ORDER-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-    );
-  }, [session, status, router]);
-
-  // Calculate total directly from items
-  const totalAmount =
-    items?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
-
-  // Debug logging
-  console.log("ZarinPal - Items:", items);
-  console.log("ZarinPal - Total Amount:", totalAmount);
-
-  // Early return if not hydrated yet
-  if (!isHydrated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session?.user) {
-    return null; // Will redirect in useEffect
-  }
-
-  if (!orderId) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">در حال آماده‌سازی...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Check if cart is empty
-  if (items.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="flex items-center mb-8">
-            <Link
-              href="/checkout"
-              className="flex-items-center text-gray-600 hover:text-gray-800 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5 ml-2" />
-              بازگشت به صفحه پرداخت
-            </Link>
-          </div>
-          <div className="text-center py-20">
-            <div className="text-2xl font-bold text-gray-800 mb-4">
-              سبد خرید شما خالی است
+    if (status === "failed") {
+      return (
+        <div className="max-w-md mx-auto mb-8 p-6 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center">
+            <XCircle className="w-8 h-8 text-red-600 ml-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-red-800">
+                پرداخت ناموفق
+              </h3>
+              <p className="text-green-700 mt-1">پرداخت توسط کاربر لغو شد</p>
             </div>
-            <div className="text-gray-600 mb-6">
-              لطفاً ابتدا محصولی به سبد خرید اضافه کنید
-            </div>
-            <Link href="/checkout">
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg">
-                بازگشت به صفحه پرداخت
-              </button>
-            </Link>
           </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
+
+    if (status === "verification_failed") {
+      return (
+        <div className="max-w-md mx-auto mb-8 p-6 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center">
+            <XCircle className="w-8 h-8 text-red-600 ml-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-red-800">
+                خطا در تایید پرداخت
+              </h3>
+              <p className="text-red-700 mt-1">{error}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (status === "error") {
+      return (
+        <div className="max-w-md mx-auto mb-8 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-center">
+            <AlertCircle className="w-8 h-8 text-yellow-600 ml-3" />
+            <div>
+              <h3 className="text-lg font-semibold text-yellow-800">
+                خطا در سیستم
+              </h3>
+              <p className="text-red-700 mt-1">{error}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center mb-8">
-          <Link
-            href="/checkout"
-            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 ml-2" />
-            بازگشت به صفحه پرداخت
-          </Link>
-        </div>
+    <div className="min-h-screen bg-gray-100 py-8">
+      <div className="container mx-auto px-4">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+          پرداخت از طریق درگاه زرین‌پال
+        </h1>
 
-        {/* Page Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            تکمیل پرداخت
-          </h1>
-          <p className="text-gray-600">
-            لطفاً اطلاعات خود را وارد کرده و پرداخت را تکمیل کنید
-          </p>
-        </div>
+        {renderStatusMessage()}
 
-        {/* Zarinpal Payment Component */}
-        <ZarinpalPayment
-          totalAmount={totalAmount} // Pass the actual cart total
-          orderId={orderId}
-        />
-
-        {/* Additional Info */}
-        <div className="mt-8 text-center text-sm text-gray-500">
-          <p>پرداخت شما از طریق درگاه امن زرین‌پال انجام می‌شود</p>
-          <p className="mt-1">در صورت بروز مشکل با پشتیبانی تماس بگیرید</p>
-        </div>
+        <ZarinPalCheckout initialAmount={amount ? Number(amount) : undefined} />
       </div>
     </div>
   );

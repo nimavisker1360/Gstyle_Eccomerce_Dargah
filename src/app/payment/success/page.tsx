@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Download, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { formatDateTime, rialToToman, formatToman } from "@/lib/utils";
+import { formatDateTime, formatToman } from "@/lib/utils";
 
 interface Invoice {
   _id: string;
@@ -54,7 +54,7 @@ export default function PaymentSuccessPage() {
   };
 
   const formatAmount = (amount: number) => {
-    const tomanAmount = rialToToman(amount);
+    const tomanAmount = amount;
     return formatToman(tomanAmount);
   };
 

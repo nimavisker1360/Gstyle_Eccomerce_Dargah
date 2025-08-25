@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { convertTRYToRial, formatRial } from "@/lib/utils";
+import { convertTRYToToman, formatToman } from "@/lib/utils";
 
 // Email HTML generator utility
 function generateEmailHTML(payload: EmailPayload): string {
@@ -15,8 +15,8 @@ function generateEmailHTML(payload: EmailPayload): string {
 
   const itemsHTML = items
     .map((item) => {
-      const lineTotalRial = convertTRYToRial(item.price * item.quantity);
-      const unitRial = convertTRYToRial(item.price);
+      const lineTotalToman = convertTRYToToman(item.price * item.quantity);
+      const unitToman = convertTRYToToman(item.price);
       return `
     <tr style="border-bottom: 1px solid #f1f5f9;">
       <td style="padding: 12px; text-align: right;">
@@ -41,9 +41,9 @@ function generateEmailHTML(payload: EmailPayload): string {
         }
       </td>
       <td style="padding: 12px; text-align: left;">
-        ${formatRial(lineTotalRial)}<br>
-        <span style="color:#64748b; font-size:12px;">(${formatRial(
-          unitRial
+        ${formatToman(lineTotalToman)}<br>
+        <span style="color:#64748b; font-size:12px;">(${formatToman(
+          unitToman
         )} × ${item.quantity})</span>
       </td>
     </tr>
@@ -93,14 +93,14 @@ function generateEmailHTML(payload: EmailPayload): string {
         <div style="margin-top: 20px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
             <span>مجموع محصولات:</span>
-            <span>${formatRial(convertTRYToRial(itemsPrice))}</span>
+            <span>${formatToman(convertTRYToToman(itemsPrice))}</span>
           </div>
           ${
             taxPrice !== undefined
               ? `
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
               <span>مالیات:</span>
-              <span>${formatRial(convertTRYToRial(taxPrice))}</span>
+              <span>${formatToman(convertTRYToToman(taxPrice))}</span>
             </div>
           `
               : ""
@@ -113,7 +113,7 @@ function generateEmailHTML(payload: EmailPayload): string {
               <span>${
                 shippingPrice === 0
                   ? "رایگان"
-                  : formatRial(convertTRYToRial(shippingPrice))
+                  : formatToman(convertTRYToToman(shippingPrice))
               }</span>
             </div>
           `
@@ -121,7 +121,7 @@ function generateEmailHTML(payload: EmailPayload): string {
           }
           <div style="display: flex; justify-content: space-between; margin-top: 12px; padding: 12px; background-color: #059669; color: white; border-radius: 8px;">
             <strong>جمع کل سفارش:</strong>
-            <strong>${formatRial(convertTRYToRial(totalPrice))}</strong>
+            <strong>${formatToman(convertTRYToToman(totalPrice))}</strong>
           </div>
         </div>
 

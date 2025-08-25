@@ -10,7 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import useCartStore from "@/hooks/use-cart-store";
-import { convertTRYToRial, formatRial, generateId, round2 } from "@/lib/utils";
+import {
+  convertTRYToToman,
+  formatToman,
+  generateId,
+  round2,
+} from "@/lib/utils";
 
 interface ShoppingProduct {
   id: string;
@@ -41,14 +46,15 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
   // Price computations
-  const displayedPriceRial = convertTRYToRial(product.price);
+  const displayedPriceToman = convertTRYToToman(product.price);
   const basePrice: number | null =
     typeof product.previousPrice === "number" && product.previousPrice > 0
       ? product.previousPrice
       : typeof product.originalPrice === "number" && product.originalPrice > 0
         ? product.originalPrice
         : null;
-  const basePriceRial = basePrice !== null ? convertTRYToRial(basePrice) : null;
+  const basePriceToman =
+    basePrice !== null ? convertTRYToToman(basePrice) : null;
   const hasDiscount =
     typeof basePrice === "number" && basePrice > product.price;
   const discountPercent = hasDiscount
@@ -87,7 +93,7 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
         name: product.title,
         slug: product.id,
         category: "تخفیف‌دار",
-        price: round2(convertTRYToRial(priceInTRY)),
+        price: round2(convertTRYToToman(priceInTRY)),
         quantity: 1,
         image: product.image,
       };
@@ -175,15 +181,15 @@ const DiscountProductCard = ({ product }: DiscountProductCardProps) => {
           <span className="text-xs text-gray-500">({product.reviews})</span>
         </div>
 
-        {/* Price column: old (Rial) above, new (Rial) below */}
+        {/* Price column: old (Toman) above, new (Toman) below */}
         <div className="flex flex-col items-end text-right gap-1">
-          {hasDiscount && basePriceRial !== null && (
+          {hasDiscount && basePriceToman !== null && (
             <span className="text-xs md:text-sm text-gray-500 line-through tabular-nums">
-              {formatRial(basePriceRial)}
+              {formatToman(basePriceToman)}
             </span>
           )}
           <span className="text-sm md:text-base font-medium text-red-600 tabular-nums">
-            {formatRial(displayedPriceRial)}
+            {formatToman(displayedPriceToman)}
           </span>
         </div>
         {/* Delivery text removed as requested */}

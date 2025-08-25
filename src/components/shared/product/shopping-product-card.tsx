@@ -11,7 +11,12 @@ import {
   Plus,
 } from "lucide-react";
 import useCartStore from "@/hooks/use-cart-store";
-import { convertTRYToRial, formatRial, generateId, round2 } from "@/lib/utils";
+import {
+  convertTRYToToman,
+  formatToman,
+  generateId,
+  round2,
+} from "@/lib/utils";
 import { OrderItem } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
@@ -58,7 +63,7 @@ export default function ShoppingProductCard({
         quantity: 1,
         countInStock: 99, // Default stock since shopping products don't have stock info
         image: product.image,
-        price: round2(convertTRYToRial(product.price)),
+        price: round2(convertTRYToToman(product.price)),
         size: undefined,
         color: undefined,
       };
@@ -97,11 +102,11 @@ export default function ShoppingProductCard({
     return stars;
   };
 
-  const safeFormatRial = (tryAmount: number | undefined | null): string => {
+  const safeFormatToman = (tryAmount: number | undefined | null): string => {
     if (tryAmount === undefined || tryAmount === null) {
-      return formatRial(0);
+      return formatToman(0);
     }
-    return formatRial(convertTRYToRial(tryAmount));
+    return formatToman(convertTRYToToman(tryAmount));
   };
 
   const hasDiscount =
@@ -169,7 +174,7 @@ export default function ShoppingProductCard({
         {/* قیمت */}
         <div className="mb-2">
           <span className="text-base font-bold text-green-700 block">
-            {safeFormatRial(product.price)}
+            {safeFormatToman(product.price)}
           </span>
         </div>
 

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import useCartStore from "@/hooks/use-cart-store";
 import { APP_NAME, FREE_SHIPPING_MIN_PRICE } from "@/lib/constants";
+import { formatPersianAmount } from "@/lib/utils/format-persian-numbers";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -164,7 +165,7 @@ export default function CartPage() {
                       <div>
                         <p className="text-right text-blue-700">
                           <span className="font-bold text-lg text-green-700">
-                            {(item.price * item.quantity).toLocaleString()} ریال
+                            {formatPersianAmount(item.price * item.quantity)}
                           </span>
                         </p>
                       </div>
@@ -175,7 +176,7 @@ export default function CartPage() {
                     جمع کل (
                     {items.reduce((acc, item) => acc + item.quantity, 0)} آیتم):{" "}
                     <span className="font-bold ml-1 text-green-700">
-                      {computedItemsPrice.toLocaleString()} ریال
+                      {formatPersianAmount(computedItemsPrice)}
                     </span>{" "}
                   </div>
                 </CardContent>
@@ -188,10 +189,9 @@ export default function CartPage() {
                     <div className="flex-1">
                       اضافه کنید{" "}
                       <span className="text-green-700">
-                        {(
+                        {formatPersianAmount(
                           FREE_SHIPPING_MIN_PRICE - computedItemsPrice
-                        ).toLocaleString()}{" "}
-                        ریال
+                        )}
                       </span>{" "}
                       از محصولات واجد شرایط به سفارش خود برای ارسال رایگان
                     </div>
@@ -200,7 +200,7 @@ export default function CartPage() {
                     جمع کل (
                     {items.reduce((acc, item) => acc + item.quantity, 0)} آیتم):{" "}
                     <span className="font-bold text-green-700">
-                      {computedItemsPrice.toLocaleString()} ریال
+                      {formatPersianAmount(computedItemsPrice)}
                     </span>{" "}
                   </div>
                   <Button

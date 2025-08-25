@@ -58,23 +58,9 @@ export function formatToman(amountInToman: number): string {
   return `${formatted} تومان`;
 }
 
-// ===== Currency: TRY → Rial (fixed rate via Toman×10) =====
-export const TRY_TO_RIAL_RATE = TRY_TO_TOMAN_RATE * 10; // 1 Toman = 10 Rials
-
-export function convertTRYToRial(tryAmount: number): number {
-  if (!Number.isFinite(tryAmount)) return 0;
-  const raw = tryAmount * TRY_TO_RIAL_RATE;
-  // Round UP to the nearest 10,000 rials
-  const roundedUpToTenThousand = Math.ceil(raw / 10000) * 10000;
-  return roundedUpToTenThousand;
-}
-
-export function formatRial(amountInRial: number): string {
-  const formatted = new Intl.NumberFormat("fa-IR").format(
-    Math.max(0, Math.round(amountInRial))
-  );
-  return `${formatted} ریال`;
-}
+// ===== Currency: TRY → Toman (alias for backward compatibility) =====
+export const convertTRYToRial = convertTRYToToman;
+export const formatRial = formatToman;
 
 // ===== Currency: Toman ↔ Rial conversion =====
 // 1 Toman = 10 Rial

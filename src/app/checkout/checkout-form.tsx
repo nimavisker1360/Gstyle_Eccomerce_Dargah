@@ -9,6 +9,7 @@ import CheckoutFooter from "./checkout-footer";
 import useCartStore from "@/hooks/use-cart-store";
 import ProductPrice from "@/components/shared/product/product-price";
 import { APP_NAME } from "@/lib/constants";
+import { formatPersianAmount } from "@/lib/utils/format-persian-numbers";
 import Link from "next/link";
 import React from "react";
 
@@ -62,7 +63,7 @@ const CheckoutForm = () => {
     console.log("Checkout - Items:", items);
     console.log("Checkout - Computed Total:", computedTotal);
     console.log("Checkout - Store Items Price:", cart.itemsPrice);
-    router.push("/checkout/zarinpal");
+    router.push(`/checkout/zarinpal?amount=${computedTotal}`);
   };
 
   // Show loading state while hydrating
@@ -135,30 +136,38 @@ const CheckoutForm = () => {
     );
   }
 
-  const CheckoutSummary = () => (
-    <Card>
-      <CardContent className="p-6">
-        <div className="text-xl text-sky-500 mb-4">خلاصه سفارش</div>
+  const CheckoutSummary = () => {
+    console.log("CheckoutSummary - computedTotal:", computedTotal);
+    console.log(
+      "CheckoutSummary - formatted:",
+      formatPersianAmount(computedTotal)
+    );
 
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <span className="text-sky-500">محصولات:</span>
-            <span className="text-emerald-700">
-              {computedTotal.toLocaleString()} ریال
-            </span>
-          </div>
-          <div className="border-t pt-3 mt-4">
-            <div className="flex justify-between text-lg text-emerald-700">
-              <span className="font-semibold">جمع کل سفارش:</span>
-              <span className="font-bold">
-                {computedTotal.toLocaleString()} ریال
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-xl text-sky-500 mb-4">خلاصه سفارش</div>
+
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-sky-500">محصولات:</span>
+              <span className="text-emerald-700">
+                {formatPersianAmount(computedTotal)}
               </span>
             </div>
+            <div className="border-t pt-3 mt-4">
+              <div className="flex justify-between text-lg text-emerald-700">
+                <span className="font-semibold">جمع کل سفارش:</span>
+                <span className="font-bold">
+                  {formatPersianAmount(computedTotal)}
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+        </CardContent>
+      </Card>
+    );
+  };
 
   return (
     <main dir="rtl" className="max-w-4xl mx-auto text-right highlight-link">

@@ -1,5 +1,5 @@
 "use client";
-import { cn, convertTRYToRial, formatRial } from "@/lib/utils";
+import { cn, convertTRYToToman, formatToman } from "@/lib/utils";
 
 const ProductPrice = ({
   price,
@@ -17,13 +17,13 @@ const ProductPrice = ({
   plain?: boolean;
 }) => {
   const discountPercent = Math.round(100 - (price / listPrice) * 100);
-  const priceRial = convertTRYToRial(price);
-  const listPriceRial = convertTRYToRial(listPrice);
+  const priceToman = convertTRYToToman(price);
+  const listPriceToman = convertTRYToToman(listPrice);
 
   return plain ? (
-    formatRial(priceRial)
+    formatToman(priceToman)
   ) : listPrice == 0 ? (
-    <div className={cn("text-2xl", className)}>{formatRial(priceRial)}</div>
+    <div className={cn("text-2xl", className)}>{formatToman(priceToman)}</div>
   ) : isDeal ? (
     <div className="space-y-2">
       <div className="flex justify-center items-center gap-2">
@@ -37,9 +37,12 @@ const ProductPrice = ({
       <div
         className={`flex ${forListing && "justify-center"} items-center gap-2`}
       >
-        <div className={cn("text-2xl", className)}>{formatRial(priceRial)}</div>
+        <div className={cn("text-2xl", className)}>
+          {formatToman(priceToman)}
+        </div>
         <div className="text-muted-foreground text-xs py-2">
-          Was: <span className="line-through">{formatRial(listPriceRial)}</span>
+          Was:{" "}
+          <span className="line-through">{formatToman(listPriceToman)}</span>
         </div>
       </div>
     </div>
@@ -47,11 +50,13 @@ const ProductPrice = ({
     <div className="">
       <div className="flex justify-center gap-3">
         <div className="text-3xl text-orange-700">-{discountPercent}%</div>
-        <div className={cn("text-2xl", className)}>{formatRial(priceRial)}</div>
+        <div className={cn("text-2xl", className)}>
+          {formatToman(priceToman)}
+        </div>
       </div>
       <div className="text-muted-foreground text-xs py-2">
         List price:{" "}
-        <span className="line-through">{formatRial(listPriceRial)}</span>
+        <span className="line-through">{formatToman(listPriceToman)}</span>
       </div>
     </div>
   );

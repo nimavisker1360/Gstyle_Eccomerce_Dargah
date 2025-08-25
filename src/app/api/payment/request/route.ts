@@ -11,7 +11,13 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { amount, description, callbackUrl, orderId } = body;
+    const {
+      amount,
+      description,
+      callbackUrl,
+      orderId,
+      paymentMethod = "direct",
+    } = body;
 
     if (!amount || !description) {
       return NextResponse.json(
@@ -66,10 +72,22 @@ export async function POST(request: NextRequest) {
     if (zarinpalResult.data?.code === 100) {
       // Payment request successful
       const authority = zarinpalResult.data.authority;
-      const paymentUrl =
-        process.env.NODE_ENV === "production"
-          ? `https://www.zarinpal.com/pg/StartPay/${authority}`
-          : `https://sandbox.zarinpal.com/pg/StartPay/${authority}`;
+
+      // Choose payment method based on user preference
+      let paymentUrl;
+      if (paymentMethod === "direct") {
+        // Direct to bank gateway (skip Zarinpal intermediate page)
+        paymentUrl =
+          process.env.NODE_ENV === "production"
+            ? `https://www.zarinpal.com/pg/StartPay/${authority}/ZarinGate`
+            : `https://sandbox.zarinpal.com/pg/StartPay/${authority}/ZarinGate`;
+      } else {
+        // Go through Zarinpal intermediate page
+        paymentUrl =
+          process.env.NODE_ENV === "production"
+            ? `https://www.zarinpal.com/pg/StartPay/${authority}`
+            : `https://sandbox.zarinpal.com/pg/StartPay/${authority}`;
+      }
 
       // Save payment request to database
       const paymentRequest = new PaymentRequest({

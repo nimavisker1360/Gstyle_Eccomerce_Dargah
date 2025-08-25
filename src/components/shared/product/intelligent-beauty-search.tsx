@@ -10,7 +10,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import useCartStore from "@/hooks/use-cart-store";
 import Image from "next/image";
-import { convertTRYToRial, formatRial, generateId, round2 } from "@/lib/utils";
+import {
+  convertTRYToToman,
+  formatToman,
+  generateId,
+  round2,
+} from "@/lib/utils";
 
 interface BeautyProduct {
   id: string;
@@ -146,11 +151,11 @@ export default function IntelligentBeautySearch({
     }
   }, [initialQuery, handleSearch]);
 
-  const safeFormatRial = (tryAmount: number | undefined | null): string => {
+  const safeFormatToman = (tryAmount: number | undefined | null): string => {
     if (tryAmount === undefined || tryAmount === null) {
-      return formatRial(0);
+      return formatToman(0);
     }
-    return formatRial(convertTRYToRial(tryAmount));
+    return formatToman(convertTRYToToman(tryAmount));
   };
 
   const handleAddToCart = (product: BeautyProduct) => {
@@ -164,7 +169,7 @@ export default function IntelligentBeautySearch({
         quantity: 1,
         countInStock: 10, // Default stock
         image: product.image,
-        price: round2(convertTRYToRial(product.price)),
+        price: round2(convertTRYToToman(product.price)),
         size: "متوسط", // Default size
         color: "مشکی", // Default color
       };
@@ -376,7 +381,7 @@ export default function IntelligentBeautySearch({
                         {/* Price */}
                         <div className="flex items-center gap-2">
                           <span className="text-base font-medium text-green-600">
-                            {safeFormatRial(product.price)}
+                            {safeFormatToman(product.price)}
                           </span>
                         </div>
 

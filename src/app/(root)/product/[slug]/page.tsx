@@ -3,7 +3,7 @@ import {
   getProductBySlug,
   getRelatedProductsByCategory,
 } from "@/lib/actions/product.actions";
-import { generateId, round2, convertTRYToRial } from "@/lib/utils";
+import { generateId, round2, convertTRYToToman } from "@/lib/utils";
 import SelectVariant from "@/components/shared/product/select-variant";
 import ProductPrice from "@/components/shared/product/product-price";
 import ProductGallery from "@/components/shared/product/product-gallery";
@@ -129,7 +129,7 @@ export default async function ProductDetails(props: {
                         name: product.name,
                         slug: product.slug,
                         category: product.category,
-                        price: round2(convertTRYToRial(product.price)),
+                        price: round2(convertTRYToToman(product.price)),
                         quantity: 1,
                         image: product.images[0],
                         size: size || product.sizes[0],
