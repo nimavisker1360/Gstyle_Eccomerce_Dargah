@@ -7,13 +7,15 @@ export function formatPersianNumber(amount: number): string {
   // Persian numerals mapping
   const persianNumbers = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
 
-  // Convert number to string
-  let numStr = amount.toString();
-  let persianResult = "";
+  // First format the number with proper thousand separators using Intl.NumberFormat
+  const formattedNumber = new Intl.NumberFormat("fa-IR").format(
+    Math.max(0, Math.round(amount))
+  );
 
-  // Convert each character to Persian
-  for (let i = 0; i < numStr.length; i++) {
-    const char = numStr[i];
+  // Convert English numerals to Persian numerals
+  let persianResult = "";
+  for (let i = 0; i < formattedNumber.length; i++) {
+    const char = formattedNumber[i];
     if (char >= "0" && char <= "9") {
       persianResult += persianNumbers[parseInt(char)];
     } else {
@@ -21,19 +23,7 @@ export function formatPersianNumber(amount: number): string {
     }
   }
 
-  // Add Persian thousand separator (،)
-  let finalResult = "";
-  let count = 0;
-  for (let i = persianResult.length - 1; i >= 0; i--) {
-    if (count === 3 && i > 0) {
-      finalResult = "،" + finalResult;
-      count = 0;
-    }
-    finalResult = persianResult[i] + finalResult;
-    count++;
-  }
-
-  return finalResult;
+  return persianResult;
 }
 
 /**
