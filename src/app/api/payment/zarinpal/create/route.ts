@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { tomanToRial } from "@/lib/utils";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/lib/db/models/transaction.model";
+import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   try {
@@ -87,7 +88,9 @@ export async function POST(req: NextRequest) {
       // Persist pending transaction (amount stored in Rial)
       try {
         await connectToDatabase();
+        const session = await auth();
         await Transaction.create({
+          userId: session?.user?.id,
           authority,
           amount: amountInRial,
           status: "pending",

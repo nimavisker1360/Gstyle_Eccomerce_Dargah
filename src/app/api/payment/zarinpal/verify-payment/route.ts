@@ -3,11 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { tomanToRial } from "@/lib/utils";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/lib/db/models/transaction.model";
+import { auth } from "@/auth";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { Authority, Status, amount } = body;
+    const { Authority, Status, amount, orderId } = body;
 
     // Validate required fields
     if (!Authority) {
@@ -50,12 +51,17 @@ export async function POST(req: NextRequest) {
 
     if (data.code === 100) {
       try {
+        const session = await auth();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           {
+            userId: session?.user?.id ?? existing?.userId,
+            orderId: orderId ?? existing?.orderId,
             status: "completed",
             refId: String(data.ref_id),
             amount: Number(amountInRial),
+            // keep any customer info that was saved during create
+            customer: existing?.customer ?? undefined,
             verifiedAt: new Date(),
           },
           { upsert: false }
@@ -101,6 +107,7 @@ export async function GET(req: NextRequest) {
     const Authority = searchParams.get("Authority");
     const Status = searchParams.get("Status");
     const amount = searchParams.get("amount");
+    const orderId = searchParams.get("orderId");
 
     if (Status !== "OK") {
       // mark cancelled
@@ -151,12 +158,16 @@ export async function GET(req: NextRequest) {
 
     if (data.code === 100) {
       try {
+        const session = await auth();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           {
+            userId: session?.user?.id ?? txn?.userId,
+            orderId: orderId ?? txn?.orderId,
             status: "completed",
             refId: String(data.ref_id),
             amount: Number(amountInRial),
+            customer: txn?.customer ?? undefined,
             verifiedAt: new Date(),
           },
           { upsert: false }
@@ -168,7 +179,7 @@ export async function GET(req: NextRequest) {
         );
       }
       // Payment verified successfully, redirect to home page
-      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=success&authority=${Authority}&refId=${data.ref_id}${amountInRial ? `&amount=${amountInRial}` : ""}`;
+      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=success&refId=${data.ref_id}${amountInRial ? `&amount=${amountInRial}` : ""}`;
       return NextResponse.redirect(successUrl);
     } else {
       try {
@@ -185,13 +196,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(failureUrl);
     }
   } catch (error: any) {
-    // Error occurred, redirect to home page with compact error code
-    let code = "unknown";
-    try {
-      if (error?.response?.status) code = String(error.response.status);
-      else if (error?.status) code = String(error.status);
-    } catch {}
-    const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=error&error=${encodeURIComponent(code)}`;
+    // Error occurred, redirect to home page
+    const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=error&error=${encodeURIComponent(error.message)}`;
     return NextResponse.redirect(failureUrl);
   }
 }
