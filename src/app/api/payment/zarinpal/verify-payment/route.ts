@@ -1,5 +1,7 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import { connectToDatabase } from "@/lib/db";
+import { Transaction } from "@/lib/db/models/transaction.model";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,12 +36,40 @@ export async function POST(req: NextRequest) {
     const { data } = response.data;
 
     if (data.code === 100) {
+      try {
+        await connectToDatabase();
+        await Transaction.findOneAndUpdate(
+          { authority: Authority },
+          {
+            status: "completed",
+            refId: String(data.ref_id),
+            amount: Number(amount),
+            verifiedAt: new Date(),
+          },
+          { upsert: false }
+        );
+      } catch (dbErr) {
+        console.error(
+          "Failed to update transaction after verification:",
+          dbErr
+        );
+      }
       return NextResponse.json({
         success: true,
         refId: data.ref_id,
         message: `✅ پرداخت موفق بود. کد پیگیری: ${data.ref_id}`,
       });
     } else {
+      try {
+        await connectToDatabase();
+        await Transaction.findOneAndUpdate(
+          { authority: Authority },
+          { status: "failed" },
+          { upsert: false }
+        );
+      } catch (dbErr) {
+        console.error("Failed to mark transaction failed:", dbErr);
+      }
       return NextResponse.json(
         {
           success: false,
@@ -62,6 +92,19 @@ export async function GET(req: NextRequest) {
     const amount = searchParams.get("amount");
 
     if (Status !== "OK") {
+      // mark cancelled
+      try {
+        await connectToDatabase();
+        if (Authority) {
+          await Transaction.findOneAndUpdate(
+            { authority: Authority },
+            { status: "cancelled" },
+            { upsert: false }
+          );
+        }
+      } catch (dbErr) {
+        console.error("Failed to mark transaction cancelled:", dbErr);
+      }
       // Payment failed or was cancelled, redirect to checkout page
       const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=failed&amount=${amount}`;
       return NextResponse.redirect(failureUrl);
@@ -87,10 +130,38 @@ export async function GET(req: NextRequest) {
     const { data } = response.data;
 
     if (data.code === 100) {
+      try {
+        await connectToDatabase();
+        await Transaction.findOneAndUpdate(
+          { authority: Authority },
+          {
+            status: "completed",
+            refId: String(data.ref_id),
+            amount: Number(amount),
+            verifiedAt: new Date(),
+          },
+          { upsert: false }
+        );
+      } catch (dbErr) {
+        console.error(
+          "Failed to update transaction after verification:",
+          dbErr
+        );
+      }
       // Payment verified successfully, redirect to success page
       const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=success&authority=${Authority}&refId=${data.ref_id}&amount=${amount}`;
       return NextResponse.redirect(successUrl);
     } else {
+      try {
+        await connectToDatabase();
+        await Transaction.findOneAndUpdate(
+          { authority: Authority },
+          { status: "failed" },
+          { upsert: false }
+        );
+      } catch (dbErr) {
+        console.error("Failed to mark transaction failed:", dbErr);
+      }
       // Payment verification failed, redirect to failure page
       const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=verification_failed&error=${data.message}&amount=${amount}`;
       return NextResponse.redirect(failureUrl);

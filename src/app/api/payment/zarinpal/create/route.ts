@@ -1,6 +1,8 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import { tomanToRial } from "@/lib/utils";
+import { connectToDatabase } from "@/lib/db";
+import { Transaction } from "@/lib/db/models/transaction.model";
 
 export async function POST(req: NextRequest) {
   try {
@@ -81,6 +83,31 @@ export async function POST(req: NextRequest) {
           ? `${customerInfo.firstName} ${customerInfo.lastName}`
           : "N/A",
       });
+
+      // Persist pending transaction (amount stored in Rial)
+      try {
+        await connectToDatabase();
+        await Transaction.create({
+          authority,
+          amount: amountInRial,
+          status: "pending",
+          gateway: "zarinpal",
+          description,
+          customer: customerInfo
+            ? {
+                firstName: customerInfo.firstName,
+                lastName: customerInfo.lastName,
+                phone: customerInfo.phone,
+                email: customerInfo.email,
+                address: customerInfo.address,
+              }
+            : undefined,
+          metadata: { callbackURL },
+        });
+      } catch (dbErr) {
+        console.error("Failed to write pending transaction:", dbErr);
+        // Do not block payment flow if DB write fails
+      }
 
       // ریدایرکت کاربر به درگاه پرداخت
       return NextResponse.json({
