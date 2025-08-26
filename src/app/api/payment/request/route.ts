@@ -29,12 +29,10 @@ export async function POST(request: NextRequest) {
     // Connect to database
     await connectToDatabase();
 
-    // Zarinpal API v4 configuration
+    // Zarinpal API v4 configuration - Force sandbox for testing
     const zarinpalMerchantId = process.env.ZARINPAL_MERCHANT_ID;
     const zarinpalApiUrl =
-      process.env.NODE_ENV === "production"
-        ? "https://api.zarinpal.com/pg/v4/payment/request.json"
-        : "https://sandbox.zarinpal.com/pg/v4/payment/request.json";
+      "https://sandbox.zarinpal.com/pg/v4/payment/request.json";
 
     if (!zarinpalMerchantId) {
       return NextResponse.json(
@@ -76,17 +74,11 @@ export async function POST(request: NextRequest) {
       // Choose payment method based on user preference
       let paymentUrl;
       if (paymentMethod === "direct") {
-        // Direct to bank gateway (skip Zarinpal intermediate page)
-        paymentUrl =
-          process.env.NODE_ENV === "production"
-            ? `https://www.zarinpal.com/pg/StartPay/${authority}/ZarinGate`
-            : `https://sandbox.zarinpal.com/pg/StartPay/${authority}/ZarinGate`;
+        // Direct to bank gateway (skip Zarinpal intermediate page) - Force sandbox
+        paymentUrl = `https://sandbox.zarinpal.com/pg/StartPay/${authority}/ZarinGate`;
       } else {
-        // Go through Zarinpal intermediate page
-        paymentUrl =
-          process.env.NODE_ENV === "production"
-            ? `https://www.zarinpal.com/pg/StartPay/${authority}`
-            : `https://sandbox.zarinpal.com/pg/StartPay/${authority}`;
+        // Go through Zarinpal intermediate page - Force sandbox
+        paymentUrl = `https://sandbox.zarinpal.com/pg/StartPay/${authority}`;
       }
 
       // Save payment request to database

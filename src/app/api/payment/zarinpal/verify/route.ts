@@ -25,10 +25,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Zarinpal API endpoints
-    const baseUrl = isProduction
-      ? "https://www.zarinpal.com/pg/rest/WebGate"
-      : "https://sandbox.zarinpal.com/pg/rest/WebGate";
+    // Zarinpal API endpoints - Force sandbox for testing
+    const baseUrl = "https://sandbox.zarinpal.com/pg/rest/WebGate";
 
     // Prepare verification data
     const verificationData = {
@@ -148,12 +146,12 @@ export async function GET(request: NextRequest) {
 
     // Redirect to appropriate page based on status
     if (status === "OK" && authority) {
-      // Payment was successful, redirect to success page
-      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/payment/success?authority=${authority}&orderId=${orderId}`;
+      // Payment was successful, redirect to home page
+      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=success&authority=${authority}&orderId=${orderId}`;
       return NextResponse.redirect(successUrl);
     } else {
-      // Payment failed or was cancelled, redirect to failure page
-      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/payment/failure?orderId=${orderId}`;
+      // Payment failed or was cancelled, redirect to home page
+      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=failed&orderId=${orderId}`;
       return NextResponse.redirect(failureUrl);
     }
   } catch (error) {

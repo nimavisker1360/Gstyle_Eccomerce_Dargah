@@ -66,7 +66,7 @@ export default function ZarinPalCheckout({
       console.log("Sending payment request with data:", {
         amount: computedTotal,
         description: "پرداخت سفارش جی استایل",
-        callbackURL: `${window.location.origin}/checkout/zarinpal?amount=${computedTotal}`,
+        callbackURL: `${window.location.origin}/api/payment/zarinpal/verify-payment?amount=${computedTotal}`,
         customerInfo: formData,
       });
 
@@ -78,7 +78,7 @@ export default function ZarinPalCheckout({
         body: JSON.stringify({
           amount: computedTotal,
           description: "پرداخت سفارش جی استایل",
-          callbackURL: `${window.location.origin}/checkout/zarinpal?amount=${computedTotal}`,
+          callbackURL: `${window.location.origin}/api/payment/zarinpal/verify-payment?amount=${computedTotal}`,
           customerInfo: formData, // ارسال اطلاعات مشتری
         }),
       });

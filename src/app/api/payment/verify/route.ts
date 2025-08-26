@@ -33,9 +33,7 @@ export async function GET(request: NextRequest) {
       // Verify payment with Zarinpal
       const zarinpalMerchantId = process.env.ZARINPAL_MERCHANT_ID;
       const zarinpalApiUrl =
-        process.env.NODE_ENV === "production"
-          ? "https://api.zarinpal.com/pg/v4/payment/verify.json"
-          : "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
+        "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
 
       if (!zarinpalMerchantId) {
         return NextResponse.json(
@@ -86,8 +84,8 @@ export async function GET(request: NextRequest) {
 
         await invoice.save();
 
-        // Redirect to success page with invoice ID
-        const successUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/payment/success?invoiceId=${invoice._id}`;
+        // Redirect to home page with success message
+        const successUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/?payment=success&invoiceId=${invoice._id}`;
         return NextResponse.redirect(successUrl);
       } else {
         // Payment verification failed
@@ -96,7 +94,7 @@ export async function GET(request: NextRequest) {
           zarinpalResult.errors || "Verification failed";
         await paymentRequest.save();
 
-        const errorUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/payment/error?authority=${authority}&error=${encodeURIComponent("Payment verification failed")}`;
+        const errorUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/?payment=error&authority=${authority}&error=${encodeURIComponent("Payment verification failed")}`;
         return NextResponse.redirect(errorUrl);
       }
     } else {
@@ -104,7 +102,7 @@ export async function GET(request: NextRequest) {
       paymentRequest.status = "cancelled";
       await paymentRequest.save();
 
-      const cancelUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/payment/cancelled?authority=${authority}`;
+      const cancelUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}/?payment=cancelled&authority=${authority}`;
       return NextResponse.redirect(cancelUrl);
     }
   } catch (error) {

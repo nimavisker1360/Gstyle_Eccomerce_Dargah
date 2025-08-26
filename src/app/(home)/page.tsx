@@ -6,12 +6,15 @@ import WhyMaltina from "@/components/shared/home/why-maltina";
 import CategoriesGrid from "@/components/shared/product/categories-grid";
 import WeeklyTrends from "@/components/shared/product/weekly-trends";
 import BrandsShowcase from "@/components/shared/product/brands-showcase";
+import PaymentStatusBanner from "@/components/shared/payment-status-banner";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
   return (
     <>
+      <PaymentStatusBanner />
+
       <div className="pt-8">
         <HomeBanner />
       </div>

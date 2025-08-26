@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import { tomanToRial } from "@/lib/utils";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/lib/db/models/transaction.model";
 
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
     const { Authority, Status, amount } = body;
 
     // Validate required fields
-    if (!Authority || !amount) {
+    if (!Authority) {
       return NextResponse.json(
         { error: "پارامترهای ضروری ارسال نشده‌اند" },
         { status: 400 }
@@ -23,13 +24,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // باید دقیقاً همون مبلغی باشه که در request زده بودی
+    // Fetch stored transaction amount (in Rial) for accurate verification
+    await connectToDatabase();
+    const existing = await Transaction.findOne({ authority: Authority });
+    const amountInRial =
+      existing?.amount ?? (amount ? tomanToRial(Number(amount)) : undefined);
+
+    if (!amountInRial) {
+      return NextResponse.json(
+        { error: "مبلغ تراکنش یافت نشد" },
+        { status: 400 }
+      );
+    }
+
     const response = await axios.post(
-      "https://api.zarinpal.com/pg/v4/payment/verify.json",
+      "https://sandbox.zarinpal.com/pg/v4/payment/verify.json",
       {
         merchant_id: process.env.ZARINPAL_MERCHANT_ID,
-        amount: amount,
-        authority: Authority, // همون 36 کاراکتری
+        amount: amountInRial,
+        authority: Authority,
       }
     );
 
@@ -37,13 +50,12 @@ export async function POST(req: NextRequest) {
 
     if (data.code === 100) {
       try {
-        await connectToDatabase();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           {
             status: "completed",
             refId: String(data.ref_id),
-            amount: Number(amount),
+            amount: Number(amountInRial),
             verifiedAt: new Date(),
           },
           { upsert: false }
@@ -61,7 +73,6 @@ export async function POST(req: NextRequest) {
       });
     } else {
       try {
-        await connectToDatabase();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           { status: "failed" },
@@ -105,25 +116,34 @@ export async function GET(req: NextRequest) {
       } catch (dbErr) {
         console.error("Failed to mark transaction cancelled:", dbErr);
       }
-      // Payment failed or was cancelled, redirect to checkout page
-      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=failed&amount=${amount}`;
+      // Payment failed or was cancelled, redirect to home page
+      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=failed${amount ? `&amount=${amount}` : ""}`;
       return NextResponse.redirect(failureUrl);
     }
 
-    if (!Authority || !amount) {
+    if (!Authority) {
       return NextResponse.json(
         { error: "پارامترهای ضروری ارسال نشده‌اند" },
         { status: 400 }
       );
     }
 
-    // باید دقیقاً همون مبلغی باشه که در request زده بودی
+    await connectToDatabase();
+    const txn = await Transaction.findOne({ authority: Authority });
+    const amountInRial =
+      txn?.amount ?? (amount ? tomanToRial(Number(amount)) : undefined);
+
+    if (!amountInRial) {
+      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=error&error=${encodeURIComponent("amount not found")}`;
+      return NextResponse.redirect(failureUrl);
+    }
+
     const response = await axios.post(
-      "https://api.zarinpal.com/pg/v4/payment/verify.json",
+      "https://sandbox.zarinpal.com/pg/v4/payment/verify.json",
       {
         merchant_id: process.env.ZARINPAL_MERCHANT_ID,
-        amount: parseInt(amount),
-        authority: Authority, // همون 36 کاراکتری
+        amount: amountInRial,
+        authority: Authority,
       }
     );
 
@@ -131,13 +151,12 @@ export async function GET(req: NextRequest) {
 
     if (data.code === 100) {
       try {
-        await connectToDatabase();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           {
             status: "completed",
             refId: String(data.ref_id),
-            amount: Number(amount),
+            amount: Number(amountInRial),
             verifiedAt: new Date(),
           },
           { upsert: false }
@@ -148,12 +167,11 @@ export async function GET(req: NextRequest) {
           dbErr
         );
       }
-      // Payment verified successfully, redirect to success page
-      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=success&authority=${Authority}&refId=${data.ref_id}&amount=${amount}`;
+      // Payment verified successfully, redirect to home page
+      const successUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=success&authority=${Authority}&refId=${data.ref_id}${amountInRial ? `&amount=${amountInRial}` : ""}`;
       return NextResponse.redirect(successUrl);
     } else {
       try {
-        await connectToDatabase();
         await Transaction.findOneAndUpdate(
           { authority: Authority },
           { status: "failed" },
@@ -162,13 +180,18 @@ export async function GET(req: NextRequest) {
       } catch (dbErr) {
         console.error("Failed to mark transaction failed:", dbErr);
       }
-      // Payment verification failed, redirect to failure page
-      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=verification_failed&error=${data.message}&amount=${amount}`;
+      // Payment verification failed, redirect to home page
+      const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=verification_failed&error=${data.message}${amountInRial ? `&amount=${amountInRial}` : ""}`;
       return NextResponse.redirect(failureUrl);
     }
   } catch (error: any) {
-    // Error occurred, redirect to failure page
-    const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/checkout/zarinpal?status=error&error=${error.message}`;
+    // Error occurred, redirect to home page with compact error code
+    let code = "unknown";
+    try {
+      if (error?.response?.status) code = String(error.response.status);
+      else if (error?.status) code = String(error.status);
+    } catch {}
+    const failureUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/?payment=error&error=${encodeURIComponent(code)}`;
     return NextResponse.redirect(failureUrl);
   }
 }
