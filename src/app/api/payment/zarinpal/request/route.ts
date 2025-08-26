@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { tomanToRial } from "@/lib/utils";
 
 export async function POST(request: NextRequest) {
   try {
@@ -59,10 +60,13 @@ export async function POST(request: NextRequest) {
       ? "https://www.zarinpal.com/pg/rest/WebGate"
       : "https://sandbox.zarinpal.com/pg/rest/WebGate";
 
+    // Convert Toman to Rial for Zarinpal API (1 Toman = 10 Rial)
+    const amountInRial = tomanToRial(amount);
+
     // Prepare payment request data
     const paymentData = {
       merchant_id: merchantId,
-      amount: amount, // Amount in Rial
+      amount: amountInRial, // Amount in Rial
       description: description,
       callback_url: callbackUrl,
       metadata: {
@@ -75,7 +79,8 @@ export async function POST(request: NextRequest) {
     console.log("Sending payment request to Zarinpal:", {
       url: baseUrl,
       merchantId,
-      amount,
+      originalAmountInToman: amount,
+      convertedAmountInRial: amountInRial,
       description,
       orderId,
       isProduction,

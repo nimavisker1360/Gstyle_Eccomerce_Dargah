@@ -1,5 +1,6 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
+import { tomanToRial } from "@/lib/utils";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,9 +15,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Convert Toman to Rial for Zarinpal API (1 Toman = 10 Rial)
+    const amountInRial = tomanToRial(amount);
+
     // Log the request for debugging
     console.log("Zarinpal payment request:", {
-      amount,
+      originalAmountInToman: amount,
+      convertedAmountInRial: amountInRial,
       description,
       callbackURL,
       customerInfo,
@@ -48,7 +53,7 @@ export async function POST(req: NextRequest) {
       "https://api.zarinpal.com/pg/v4/payment/request.json",
       {
         merchant_id: process.env.ZARINPAL_MERCHANT_ID,
-        amount: amount, // مبلغ به تومان
+        amount: amountInRial, // مبلغ به ریال (تبدیل شده از تومان)
         description: description,
         callback_url: callbackURL, // آدرس برگشت
         metadata: customerInfo
