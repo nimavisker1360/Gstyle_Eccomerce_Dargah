@@ -1,10 +1,12 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import mongoose from "mongoose";
 import { formatToman, tomanToRial } from "@/lib/utils";
 import { connectToDatabase } from "@/lib/db";
 import { Transaction } from "@/lib/db/models/transaction.model";
 import { Invoice } from "@/lib/db/models/invoice.model";
+import Cart from "@/lib/db/models/cart.model";
 import { auth } from "@/auth";
 
 function parseRecipientEmails(input?: string | null): string[] {
@@ -51,6 +53,71 @@ async function sendInvoiceEmailFromTransaction(params: {
     transaction?.customer?.lastName || ""
   }`.trim();
 
+  // Load cart items for this user to include in the invoice email
+  let items: Array<{
+    name: string;
+    image: string;
+    quantity: number;
+    price: number;
+    color?: string;
+    size?: string;
+  }> = [];
+  let itemsPrice: number | undefined;
+  let shippingPrice: number | undefined;
+  let taxPrice: number | undefined;
+  let totalPrice: number | undefined;
+  try {
+    if (transaction?.userId) {
+      const userId = String(transaction.userId);
+      const userFilter = mongoose.Types.ObjectId.isValid(userId)
+        ? { user: new mongoose.Types.ObjectId(userId) }
+        : { user: userId as any };
+      const cartDoc = await Cart.findOne(userFilter);
+      if (cartDoc) {
+        items = (cartDoc.items || []).map((it: any) => ({
+          name: it.name,
+          image: it.image,
+          quantity: it.quantity,
+          price: it.price,
+          color: it.color,
+          size: it.size,
+        }));
+        itemsPrice = cartDoc.itemsPrice;
+        shippingPrice = cartDoc.shippingPrice;
+        taxPrice = cartDoc.taxPrice;
+        totalPrice = cartDoc.totalPrice;
+      }
+    }
+  } catch {}
+
+  const itemsRows = items
+    .map((it) => {
+      const lineTotal = it.price * it.quantity;
+      return `
+        <tr style="border-bottom:1px solid #e2e8f0;">
+          <td style="padding:10px; text-align:center;">
+            ${it.image ? `<img src="${it.image}" alt="${it.name}" style="width:56px;height:56px;border-radius:8px;object-fit:cover;"/>` : ""}
+          </td>
+          <td style="padding:10px;">
+            <div style="font-weight:600">${it.name}</div>
+            <div style="color:#64748b; font-size:12px;">${it.color || ""} ${it.size ? `| ${it.size}` : ""}</div>
+          </td>
+          <td style="padding:10px; text-align:center;">${it.quantity}</td>
+          <td style="padding:10px; text-align:left; white-space:nowrap;">${formatToman(it.price)}</td>
+          <td style="padding:10px; text-align:left; white-space:nowrap;">${formatToman(lineTotal)}</td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  // Prefer the verified transaction amount when cart total is missing/zero
+  const displayAmountToman =
+    typeof totalPrice === "number" && totalPrice > 0
+      ? totalPrice
+      : amountToman > 0
+        ? amountToman
+        : 0;
+
   const html = `
   <!doctype html>
   <html dir="rtl" lang="fa">
@@ -86,9 +153,58 @@ async function sendInvoiceEmailFromTransaction(params: {
           <div class="row"><span class="label">کد رهگیری زرین‌پال</span><span class="value">${authority}</span></div>
           <div class="row"><span class="label">شماره تراکنش</span><span class="value">${refId}</span></div>
           <div class="row"><span class="label">مبلغ پرداختی</span><span class="value">${formatToman(
-            amountToman
+            displayAmountToman
           )}</span></div>
           <div class="row"><span class="label">وضعیت</span><span class="value">پرداخت شده</span></div>
+          ${
+            items.length
+              ? `
+          <div style="margin-top:14px;">
+            <div style="font-weight:700; color:#0f172a; margin-bottom:8px;">سبد خرید</div>
+            <table style="width:100%; border-collapse:collapse;">
+              <thead>
+                <tr style="background:#f1f5f9; border-bottom:1px solid #e2e8f0;">
+                  <th style="padding:10px; text-align:center;">تصویر</th>
+                  <th style="padding:10px; text-align:right;">محصول</th>
+                  <th style="padding:10px; text-align:center;">تعداد</th>
+                  <th style="padding:10px; text-align:left;">قیمت واحد</th>
+                  <th style="padding:10px; text-align:left;">قیمت کل</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRows}
+              </tbody>
+            </table>
+            <div style="margin-top:12px; border:1px solid #e2e8f0; border-radius:8px; padding:12px;">
+              ${
+                typeof itemsPrice === "number"
+                  ? `<div style="display:flex; justify-content:space-between; margin:6px 0;"><span>مجموع کالاها</span><strong>${formatToman(itemsPrice)}</strong></div>`
+                  : ""
+              }
+              ${
+                typeof taxPrice === "number"
+                  ? `<div style="display:flex; justify-content:space-between; margin:6px 0;"><span>مالیات</span><strong>${formatToman(taxPrice)}</strong></div>`
+                  : ""
+              }
+              ${
+                typeof shippingPrice === "number"
+                  ? `<div style="display:flex; justify-content:space-between; margin:6px 0;"><span>هزینه ارسال</span><strong>${
+                      shippingPrice === 0
+                        ? "رایگان"
+                        : formatToman(shippingPrice)
+                    }</strong></div>`
+                  : ""
+              }
+              ${
+                typeof totalPrice === "number"
+                  ? `<div style="display:flex; justify-content:space-between; margin-top:10px; padding:10px; background:#059669; color:#fff; border-radius:6px;"><span>جمع کل</span><strong>${formatToman(totalPrice)}</strong></div>`
+                  : ""
+              }
+            </div>
+          </div>
+          `
+              : ""
+          }
         </div>
         <div class="foot">این ایمیل به صورت خودکار پس از تایید پرداخت ارسال شده است.</div>
       </div>
