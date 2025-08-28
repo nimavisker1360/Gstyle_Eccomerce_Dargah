@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, Search } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface SearchSidebarProps {
   currentQuery?: string;
@@ -35,6 +35,8 @@ export default function SearchSidebar({
   onItemSelected,
 }: SearchSidebarProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const forcedCategory = searchParams.get("category");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categorySearch, setCategorySearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,13 @@ export default function SearchSidebar({
     return { grouped: groups, flat: flatItems };
   }, [allCategories]);
 
+  // Determine forced group (Persian name) from URL slug
+  const forcedGroupName = useMemo(() => {
+    if (!forcedCategory) return null as string | null;
+    const group = (allCategories as any)[forcedCategory];
+    return group?.name || null;
+  }, [forcedCategory, allCategories]);
+
   const handleCategoryChange = (
     categoryId: string,
     checked: boolean,
@@ -104,7 +113,8 @@ export default function SearchSidebar({
       setSelectedCategories([categoryId]);
       // Build a query like "{main} {sub}" and navigate to /search
       const searchQuery = `${main} ${sub}`;
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      const catParam = forcedCategory ? `&category=${forcedCategory}` : "";
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}${catParam}`);
       // If provided (mobile), close the sidebar immediately
       onItemSelected?.();
     } else {
@@ -140,6 +150,14 @@ export default function SearchSidebar({
       }))
       .filter((g) => g.mains.length > 0);
   }, [categorySearch, grouped]);
+
+  // If a category is forced via URL, only show that group's categories
+  const visibleGroups = useMemo(() => {
+    if (forcedGroupName) {
+      return filteredGroups.filter((g) => g.groupName === forcedGroupName);
+    }
+    return filteredGroups;
+  }, [filteredGroups, forcedGroupName]);
 
   return (
     <div className="w-80 bg-white border-l border-green-200 p-6 h-screen overflow-y-auto">
@@ -229,7 +247,7 @@ export default function SearchSidebar({
         )}
 
         <div className="space-y-5">
-          {filteredGroups.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.groupName} className="space-y-3">
               {group.mains.map((m) => (
                 <div key={`${group.groupName}-${m.main}`} className="space-y-2">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, ChevronRight, Plus, SearchX } from "lucide-react";
@@ -42,6 +43,8 @@ export default function SearchProductsLayout({
   brandFilter,
   typeFilter,
 }: SearchProductsLayoutProps) {
+  const searchParams = useSearchParams();
+  const forcedCategory = searchParams.get("category");
   const [products, setProducts] = useState<ShoppingProduct[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -236,6 +239,11 @@ export default function SearchProductsLayout({
   const getDisplayText = (query: string) => {
     const lowerQuery = query.toLowerCase();
 
+    // If category is explicitly provided in URL, respect it for display
+    if (forcedCategory === "electronics") {
+      return "الکترونیک";
+    }
+
     // حیوانات خانگی - بررسی اول برای اولویت بالاتر
     const petsKeywords = [
       "حیوانات خانگی",
@@ -380,16 +388,17 @@ export default function SearchProductsLayout({
     ) {
       return "ویتامین و دارو";
     } else if (
-      // اول مد و پوشاک برای جلوگیری از اشتباه در واژه‌هایی مثل "کیف"
+      // الکترونیک را قبل از مد و پوشاک بررسی کن تا واژه‌هایی مثل "کیف" در اکسسوری موبایل باعث انحراف نشود
+      electronicsKeywords.some((keyword) => lowerQuery.includes(keyword))
+    ) {
+      return "الکترونیک";
+    } else if (
+      // سپس مد و پوشاک را بررسی کن
       fashionKeywords.some((keyword) => lowerQuery.includes(keyword))
     ) {
       return "مد و پوشاک";
     } else if (sportsKeywords.some((keyword) => lowerQuery.includes(keyword))) {
       return "لوازم ورزشی";
-    } else if (
-      electronicsKeywords.some((keyword) => lowerQuery.includes(keyword))
-    ) {
-      return "الکترونیک";
     }
 
     // اگر هیچ کدام تطبیق نکرد، متن اصلی را کوتاه کن
