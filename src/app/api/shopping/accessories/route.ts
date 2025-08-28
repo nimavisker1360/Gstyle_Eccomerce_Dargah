@@ -582,6 +582,15 @@ export async function GET(request: NextRequest) {
     // Enhance search query with OpenAI
     let enhancedQuery = await enhanceSearchQuery(query);
 
+    // Force-add strong Turkish keywords for mobile accessories intent
+    if (
+      query.toLowerCase().includes("لوازم جانبی") ||
+      query.toLowerCase().includes("اکسسوری")
+    ) {
+      enhancedQuery +=
+        " telefon aksesuarları cep telefonu aksesuarları kılıf kapak ekran koruyucu şarj aleti şarj cihazı kablo adaptör powerbank kulaklık bluetooth araç tutucu holder tripod selfie çubuğu car charger";
+    }
+
     console.log(`🔍 Searching with enhanced query: "${enhancedQuery}"`);
 
     const serpApiParams = {

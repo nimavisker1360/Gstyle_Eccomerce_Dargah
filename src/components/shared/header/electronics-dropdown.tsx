@@ -9,7 +9,7 @@ const defaultElectronicsCategories = {
   الکترونیک: [
     "ساعت هوشمند",
     "هدفون",
-    "لوازم جانبی",
+    "لوازم جانبی موبایل",
     // Removed per requirement: گوشی موبایل، لپ تاپ، تبلت، کامپیوتر، دوربین، کنسول بازی
     "اسپیکر",
     "کیف و کاور",
@@ -53,7 +53,7 @@ export default function ElectronicsDropdown() {
   const router = useRouter();
 
   // Cache key for electronics categories
-  const CACHE_KEY = "electronics_categories_cache";
+  const CACHE_KEY = "electronics_categories_cache_v2";
   const CACHE_EXPIRY = 30 * 60 * 1000; // 30 minutes
 
   // Load categories from cache or API

@@ -86,7 +86,10 @@ export default function SearchProductsLayout({
       // Persian
       "گوشی موبایل",
       "گوشی",
-      "موبایل",
+      // برای جستجوهای لوازم جانبی موبایل، خود "موبایل" را حذف نکن
+      // مگر اینکه به تنهایی یا به شکل دستگاه کامل استفاده شده باشد
+      // در نتیجه این واژه را از لیست حذف می‌کنیم تا پیشنهادات لوازم جانبی بلاک نشود
+      // "موبایل" (removed intentionally)
       "لپ تاپ",
       "لپ تاب",
       "لپتاب",
@@ -107,7 +110,7 @@ export default function SearchProductsLayout({
       // English
       "smartphone",
       "mobile phone",
-      "mobile",
+      // "mobile" (removed intentionally)
       "laptop",
       "notebook",
       "tablet",

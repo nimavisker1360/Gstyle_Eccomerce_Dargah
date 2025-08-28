@@ -108,7 +108,7 @@ const sportsCategories = {
 };
 
 const electronicsCategories = {
-  الکترونیک: ["ساعت هوشمند", "هدفون", "لوازم جانبی"],
+  الکترونیک: ["ساعت هوشمند", "هدفون", "لوازم جانبی موبایل"],
 };
 
 const petsCategories = {

@@ -503,6 +503,15 @@ export async function GET(request: NextRequest) {
         } catch {}
       }
       const lowerQuery = enhancedQuery.toLowerCase();
+
+      // If the intent is accessories (e.g., "لوازم جانبی"), bias query towards mobile accessories in Turkish
+      if (
+        originalQuery.toLowerCase().includes("لوازم جانبی") ||
+        originalQuery.toLowerCase().includes("اکسسوری")
+      ) {
+        enhancedQuery +=
+          " telefon aksesuarları cep telefonu aksesuarları cep telefonu kılıf kapak ekran koruyucu şarj aleti şarj cihazı kablo adaptör powerbank kulaklık bluetooth araç tutucu holder telefon tutucu tripod selfie çubuğu car charger araç şarj cihazı";
+      }
       let isFashionQuery = false;
       const petsKeywords = [
         "حیوانات خانگی",
