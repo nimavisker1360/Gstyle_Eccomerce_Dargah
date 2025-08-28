@@ -88,10 +88,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     jwt: async ({ token, user, trigger, session }) => {
       if (user) {
-        token.name = user.name || user.email!.split("@")[0];
-        token.role = (user as { role: string }).role;
-        token.mobile = (user as { mobile?: string }).mobile;
-        token.image = (user as { image?: string }).image;
+        // Keep JWT minimal to prevent oversized cookies (HTTP 431)
+        token.role = (user as { role?: string }).role;
       }
 
       // When session is updated (e.g., after avatar upload), merge provided fields
@@ -99,30 +97,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (session?.name) {
           token.name = session.name as string;
         }
-        if (session?.image) {
-          token.image = session.image as string;
-        }
-        // Optionally fetch fresh data from database
-        if (token.sub && session?.image) {
-          try {
-            await connectToDatabase();
-            const freshUser = await User.findById(token.sub).select("image");
-            if (freshUser?.image) {
-              token.image = freshUser.image;
-            }
-          } catch (error) {
-            console.error("Error fetching fresh user data:", error);
-          }
-        }
       }
       return token;
     },
     session: async ({ session, user, trigger, token }) => {
       session.user.id = token.sub as string;
-      session.user.role = token.role as string;
-      session.user.name = token.name;
-      session.user.mobile = token.mobile as string;
-      session.user.image = token.image as string;
+      session.user.role = (token.role as string) || "User";
+      // Fetch user profile fields from database instead of storing in JWT
+      try {
+        if (token.sub) {
+          await connectToDatabase();
+          const freshUser = await User.findById(token.sub).select(
+            "name mobile image role"
+          );
+          if (freshUser) {
+            session.user.name = freshUser.name;
+            session.user.mobile = freshUser.mobile as string;
+            // Avoid very large base64 avatars in session payload
+            const imageValue = (freshUser.image || undefined) as
+              | string
+              | undefined;
+            if (imageValue && imageValue.length > 2048) {
+              session.user.image = undefined as unknown as string;
+            } else {
+              session.user.image = imageValue as string;
+            }
+            session.user.role = freshUser.role || session.user.role;
+          }
+        }
+      } catch (error) {
+        // Non-fatal if avatar cannot be fetched
+      }
       return session;
     },
   },
