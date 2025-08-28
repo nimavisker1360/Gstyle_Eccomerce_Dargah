@@ -3,6 +3,10 @@ import { connectToDatabase } from "@/lib/db";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 import { redisSet, ONE_DAY_SECONDS, getRedisKeyForQuery } from "@/lib/redis";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Daily refresh cron: refresh popular queries by re-fetching via main API and updating Redis+Mongo
 export async function GET(request: NextRequest) {
   try {

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Cron job for automatic cache cleanup
 export async function GET(request: NextRequest) {
   try {
