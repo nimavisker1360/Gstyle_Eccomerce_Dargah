@@ -74,31 +74,37 @@ export default function PaymentStatusBanner() {
       setBannerData({ type, message, details });
       setShowBanner(true);
 
-      // Auto-hide after 10 seconds
+      // Auto-hide after 3 seconds
       const hideTimer = setTimeout(() => {
         setShowBanner(false);
-      }, 10000);
+        setBannerData(null);
+      }, 3000);
 
-      // Remove query params from URL so the banner doesn't re-appear on refresh/back
-      try {
-        const url = new URL(window.location.href);
-        url.searchParams.delete("payment");
-        url.searchParams.delete("authority");
-        url.searchParams.delete("refId");
-        url.searchParams.delete("amount");
-        url.searchParams.delete("orderId");
-        url.searchParams.delete("invoiceId");
-        url.searchParams.delete("error");
-        window.history.replaceState(
-          null,
-          "",
-          url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")
-        );
-      } catch {}
+      // Remove query params from URL after hide to avoid re-triggering
+      const urlTimer = setTimeout(() => {
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("payment");
+          url.searchParams.delete("authority");
+          url.searchParams.delete("refId");
+          url.searchParams.delete("amount");
+          url.searchParams.delete("orderId");
+          url.searchParams.delete("invoiceId");
+          url.searchParams.delete("error");
+          window.history.replaceState(
+            null,
+            "",
+            url.pathname + (url.search ? `?${url.searchParams.toString()}` : "")
+          );
+        } catch {}
+      }, 3200);
 
-      return () => clearTimeout(hideTimer);
+      return () => {
+        clearTimeout(hideTimer);
+        clearTimeout(urlTimer);
+      };
     }
-  }, [searchParams, clearCart]);
+  }, [searchParams.get("payment"), clearCart]);
 
   if (!showBanner || !bannerData) return null;
 
