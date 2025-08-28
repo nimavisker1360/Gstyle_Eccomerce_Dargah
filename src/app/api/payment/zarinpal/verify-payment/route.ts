@@ -259,6 +259,14 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { Authority, Status, amount, orderId } = body;
 
+    // Environment-based URL configuration
+    const isProduction =
+      process.env.ZARINPAL_MODE === "production" ||
+      process.env.NODE_ENV === "production";
+    const verifyUrl = isProduction
+      ? "https://www.zarinpal.com/pg/v4/payment/verify.json"
+      : "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
+
     // Validate required fields
     if (!Authority) {
       return NextResponse.json(
@@ -287,14 +295,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const response = await axios.post(
-      "https://sandbox.zarinpal.com/pg/v4/payment/verify.json",
-      {
-        merchant_id: process.env.ZARINPAL_MERCHANT_ID,
-        amount: amountInRial,
-        authority: Authority,
-      }
-    );
+    const response = await axios.post(verifyUrl, {
+      merchant_id: process.env.ZARINPAL_MERCHANT_ID,
+      amount: amountInRial,
+      authority: Authority,
+    });
 
     const { data } = response.data;
 
@@ -369,6 +374,14 @@ export async function GET(req: NextRequest) {
     const amount = searchParams.get("amount");
     const orderId = searchParams.get("orderId");
 
+    // Environment-based URL configuration
+    const isProduction =
+      process.env.ZARINPAL_MODE === "production" ||
+      process.env.NODE_ENV === "production";
+    const verifyUrl = isProduction
+      ? "https://www.zarinpal.com/pg/v4/payment/verify.json"
+      : "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
+
     if (Status !== "OK") {
       // mark cancelled
       try {
@@ -405,14 +418,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(failureUrl);
     }
 
-    const response = await axios.post(
-      "https://sandbox.zarinpal.com/pg/v4/payment/verify.json",
-      {
-        merchant_id: process.env.ZARINPAL_MERCHANT_ID,
-        amount: amountInRial,
-        authority: Authority,
-      }
-    );
+    const response = await axios.post(verifyUrl, {
+      merchant_id: process.env.ZARINPAL_MERCHANT_ID,
+      amount: amountInRial,
+      authority: Authority,
+    });
 
     const { data } = response.data;
 

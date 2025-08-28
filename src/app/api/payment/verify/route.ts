@@ -33,7 +33,10 @@ export async function GET(request: NextRequest) {
       // Verify payment with Zarinpal
       const zarinpalMerchantId = process.env.ZARINPAL_MERCHANT_ID;
       const zarinpalApiUrl =
-        "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
+        process.env.ZARINPAL_MODE === "production" ||
+        process.env.NODE_ENV === "production"
+          ? "https://www.zarinpal.com/pg/v4/payment/verify.json"
+          : "https://sandbox.zarinpal.com/pg/v4/payment/verify.json";
 
       if (!zarinpalMerchantId) {
         return NextResponse.json(

@@ -53,7 +53,10 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await axios.post(
-      "https://sandbox.zarinpal.com/pg/v4/payment/request.json",
+      process.env.ZARINPAL_MODE === "production" ||
+        process.env.NODE_ENV === "production"
+        ? "https://www.zarinpal.com/pg/v4/payment/request.json"
+        : "https://sandbox.zarinpal.com/pg/v4/payment/request.json",
       {
         merchant_id: process.env.ZARINPAL_MERCHANT_ID,
         amount: amountInRial, // مبلغ به ریال (تبدیل شده از تومان)
@@ -116,7 +119,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         authority: authority,
-        paymentUrl: `https://sandbox.zarinpal.com/pg/StartPay/${authority}`,
+        paymentUrl:
+          process.env.ZARINPAL_MODE === "production" ||
+          process.env.NODE_ENV === "production"
+            ? `https://www.zarinpal.com/pg/StartPay/${authority}`
+            : `https://sandbox.zarinpal.com/pg/StartPay/${authority}`,
         message: "درخواست پرداخت با موفقیت ایجاد شد",
         customerInfo: customerInfo,
       });
