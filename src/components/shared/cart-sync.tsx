@@ -49,7 +49,7 @@ export default function CartSync() {
       }
     };
     load();
-  }, [status]);
+  }, [status, replaceCart]);
 
   // Persist cart on any change while logged in
   useEffect(() => {

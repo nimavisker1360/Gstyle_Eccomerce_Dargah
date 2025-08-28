@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJson } from "serpapi";
 
+export const dynamic = "force-dynamic";
+
 // Function to convert Persian query to Turkish keywords
 function convertToTurkishKeywords(query: string): string {
   const keywordMap: { [key: string]: string } = {

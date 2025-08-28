@@ -3,6 +3,8 @@ import { getJson } from "serpapi";
 import { connectToDatabase } from "@/lib/db";
 import DiscountProduct from "@/lib/db/models/discount-product.model";
 
+export const dynamic = "force-dynamic";
+
 // Curated fashion-focused queries (targeting popular Turkish fashion retailers)
 const discountQueries = [
   // Trendyol

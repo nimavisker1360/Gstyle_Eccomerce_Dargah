@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default function PaymentErrorPage() {
+function PaymentErrorContent() {
   const searchParams = useSearchParams();
   const authority = searchParams.get("authority");
   const error = searchParams.get("error");
@@ -107,5 +108,22 @@ export default function PaymentErrorPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PaymentErrorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gradient-to-br from-red-50 to-orange-50 py-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
+          </div>
+        </div>
+      }
+    >
+      <PaymentErrorContent />
+    </Suspense>
   );
 }

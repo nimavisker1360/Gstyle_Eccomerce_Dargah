@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJson } from "serpapi";
 
+export const dynamic = "force-dynamic";
+
 // Turkish brand mapping with search keywords
 const turkishBrands: { [key: string]: string[] } = {
   "LC Waikiki": ["LC Waikiki", "LCW", "lcwaikiki"],

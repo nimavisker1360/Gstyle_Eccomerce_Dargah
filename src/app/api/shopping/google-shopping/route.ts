@@ -3,6 +3,8 @@ import { getJson } from "serpapi";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { connectToDatabase } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 
 // Category mapping for Persian translations

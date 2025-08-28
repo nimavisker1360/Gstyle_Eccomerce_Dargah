@@ -5,6 +5,8 @@ import { openai } from "@ai-sdk/openai";
 import { connectToDatabase } from "@/lib/db";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 
+export const dynamic = "force-dynamic";
+
 // معتبرترین سایت‌های ترکی برای مد و پوشاک
 const TURKISH_FASHION_SITES = [
   "hepsiburada.com",

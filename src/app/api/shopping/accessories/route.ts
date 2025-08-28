@@ -3,6 +3,8 @@ import { getJson } from "serpapi";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 
+export const dynamic = "force-dynamic";
+
 // Function to extract and validate product links from SERP API
 function extractProductLink(product: any): string | null {
   // List of valid store domains we want to accept

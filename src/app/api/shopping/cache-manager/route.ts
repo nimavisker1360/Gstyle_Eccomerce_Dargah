@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 
+export const dynamic = "force-dynamic";
+
 // Cache management API
 export async function GET(request: NextRequest) {
   try {

@@ -5,6 +5,8 @@ import { openai } from "@ai-sdk/openai";
 import { connectToDatabase } from "@/lib/db";
 import GoogleShoppingProduct from "@/lib/db/models/google-shopping-product.model";
 
+export const dynamic = "force-dynamic";
+
 interface SportProduct {
   id: string;
   title: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, Loader2, ArrowLeft, ChevronRight } from "lucide-react";
@@ -76,91 +76,95 @@ export default function AllProductsView({
   ];
 
   // Queries that should immediately yield no results
-  const EXCLUDED_QUERY_KEYWORDS: string[] = [
-    // Persian
-    "گوشی موبایل",
-    "گوشی",
-    "موبایل",
-    "لپ تاپ",
-    "لپ‌تاپ",
-    "تبلت",
-    "کامپیوتر",
-    "دوربین",
-    "کنسول بازی",
-    // Turkish
-    "telefon",
-    "cep telefonu",
-    "akıllı telefon",
-    "bilgisayar",
-    "dizüstü bilgisayar",
-    "kamera",
-    "oyun konsolu",
-    "konsol",
-    // English
-    "smartphone",
-    "mobile phone",
-    "mobile",
-    "laptop",
-    "notebook",
-    "tablet",
-    "computer",
-    "pc ",
-    "camera",
-    "playstation",
-    "xbox",
-    "console",
-    "ps5",
-  ];
+  const EXCLUDED_QUERY_KEYWORDS: string[] = useMemo(
+    () => [
+      // Persian
+      "گوشی موبایل",
+      "گوشی",
+      "موبایل",
+      "لپ تاپ",
+      "لپ‌تاپ",
+      "تبلت",
+      "کامپیوتر",
+      "دوربین",
+      "کنسول بازی",
+      // Turkish
+      "telefon",
+      "cep telefonu",
+      "akıllı telefon",
+      "bilgisayar",
+      "dizüstü bilgisayar",
+      "kamera",
+      "oyun konsolu",
+      "konsol",
+      // English
+      "smartphone",
+      "mobile phone",
+      "mobile",
+      "laptop",
+      "notebook",
+      "tablet",
+      "computer",
+      "pc ",
+      "camera",
+      "playstation",
+      "xbox",
+      "console",
+      "ps5",
+    ],
+    []
+  );
 
-  const filterExcludedProducts = (
-    items: ShoppingProduct[] = []
-  ): ShoppingProduct[] => {
-    return items.filter((p) => {
-      const haystack =
-        `${p.title || ""} ${p.originalTitle || ""} ${p.description || ""} ${p.originalDescription || ""}`.toLowerCase();
+  const filterExcludedProducts = useCallback(
+    (items: ShoppingProduct[] = []): ShoppingProduct[] => {
+      return items.filter((p) => {
+        const haystack =
+          `${p.title || ""} ${p.originalTitle || ""} ${p.description || ""} ${p.originalDescription || ""}`.toLowerCase();
 
-      // Filter out women's underwear products (Persian, English, Turkish)
-      const underwearKeywords = [
-        // Persian
-        "لباس زیر زنانه",
-        "سوتین",
-        "کولوت",
-        "شورت زنانه",
-        "پوشاک زیر",
-        "لینجری",
-        // English
-        "bra",
-        "panties",
-        "underwear",
-        "lingerie",
-        "slip",
-        "thong",
-        "g-string",
-        "briefs",
-        "bikini",
-        "swimwear",
-        // Turkish
-        "sütyen",
-        "külot",
-        "pamuklu",
-        "iç çamaşırı",
-        "mayo",
-        "bikini",
-        "plaj giyim",
-        "gece elbisesi",
-        "gece kıyafeti",
-      ];
+        // Filter out women's underwear products (Persian, English, Turkish)
+        const underwearKeywords = [
+          // Persian
+          "لباس زیر زنانه",
+          "سوتین",
+          "کولوت",
+          "شورت زنانه",
+          "پوشاک زیر",
+          "لینجری",
+          // English
+          "bra",
+          "panties",
+          "underwear",
+          "lingerie",
+          "slip",
+          "thong",
+          "g-string",
+          "briefs",
+          "bikini",
+          "swimwear",
+          // Turkish
+          "sütyen",
+          "külot",
+          "pamuklu",
+          "iç çamaşırı",
+          "mayo",
+          "bikini",
+          "plaj giyim",
+          "gece elbisesi",
+          "gece kıyafeti",
+        ];
 
-      // Check if product contains underwear keywords - if yes, exclude it
-      if (underwearKeywords.some((keyword) => haystack.includes(keyword))) {
-        return false;
-      }
+        // Check if product contains underwear keywords - if yes, exclude it
+        if (underwearKeywords.some((keyword) => haystack.includes(keyword))) {
+          return false;
+        }
 
-      return !EXCLUDED_ELECTRONICS_KEYWORDS.some((kw) =>
-        haystack.includes(kw.toLowerCase())
-      );
-    });
-  };
+        return !EXCLUDED_ELECTRONICS_KEYWORDS.some((kw) =>
+          haystack.includes(kw.toLowerCase())
+        );
+      });
+    },
+    [EXCLUDED_QUERY_KEYWORDS]
+  );
 
   // تشخیص نوع کتگوری و کوتاه کردن متن نمایشی
   const getDisplayText = (query: string) => {
@@ -414,7 +418,7 @@ export default function AllProductsView({
         setLoading(false);
       }
     },
-    [brandFilter, typeFilter]
+    [brandFilter, typeFilter, EXCLUDED_QUERY_KEYWORDS, filterExcludedProducts]
   );
 
   const handleSubmit = (e: React.FormEvent) => {

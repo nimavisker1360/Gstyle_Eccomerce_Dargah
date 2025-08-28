@@ -3,6 +3,8 @@ import { getJson } from "serpapi";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { connectToDatabase } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 import { ONE_HOUR_SECONDS, redisSet, getRedisKeyForQuery } from "@/lib/redis";
 import { getProducts, normalizeQuery } from "@/lib/search";
 import { getTurkishKeywordsForPersianQuery } from "@/lib/tr-fa-mapping";

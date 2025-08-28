@@ -7,13 +7,16 @@ import CategoriesGrid from "@/components/shared/product/categories-grid";
 import WeeklyTrends from "@/components/shared/product/weekly-trends";
 import BrandsShowcase from "@/components/shared/product/brands-showcase";
 import PaymentStatusBanner from "@/components/shared/payment-status-banner";
+import { Suspense } from "react";
 
 export default async function HomePage() {
   const telegramSupport = process.env.TELEGRAM_SUPPORT || "@gstyle_support";
 
   return (
     <>
-      <PaymentStatusBanner />
+      <Suspense fallback={null}>
+        <PaymentStatusBanner />
+      </Suspense>
 
       <div className="pt-8">
         <HomeBanner />

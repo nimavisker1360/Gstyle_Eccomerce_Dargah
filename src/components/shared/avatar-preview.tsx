@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type AvatarPreviewProps = {
   initialSrc: string;
@@ -41,7 +42,13 @@ export default function AvatarPreview(props: AvatarPreviewProps) {
   return (
     <div className={containerClassName}>
       {src ? (
-        <img src={src} alt="avatar" className={imageClassName} />
+        <Image
+          src={src}
+          alt="avatar"
+          className={imageClassName}
+          width={100}
+          height={100}
+        />
       ) : (
         <div className={fallbackClassName}>بدون تصویر</div>
       )}

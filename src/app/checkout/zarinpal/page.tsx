@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ZarinPalCheckout from "@/components/shared/ZarinPalCheckout";
 
-export default function ZarinPalCheckoutPage() {
+function ZarinPalCheckoutContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -30,5 +30,22 @@ export default function ZarinPalCheckoutPage() {
         <ZarinPalCheckout />
       </div>
     </div>
+  );
+}
+
+export default function ZarinPalCheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-100 py-8 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
+          </div>
+        </div>
+      }
+    >
+      <ZarinPalCheckoutContent />
+    </Suspense>
   );
 }

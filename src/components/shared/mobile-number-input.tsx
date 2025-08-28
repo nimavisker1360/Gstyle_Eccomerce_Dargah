@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export default function MobileNumberInput({
     setDisplayMobile(currentMobile);
   }, [currentMobile]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!mobile.trim()) {
       toast({
         title: "خطا",
@@ -91,7 +91,7 @@ export default function MobileNumberInput({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [mobile]);
 
   // Allow a global confirm action to trigger save (used by account confirm button)
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function MobileNumberInput({
     return () => {
       window.removeEventListener("account-confirm", handler as EventListener);
     };
-  }, [isEditing, mobile]);
+  }, [isEditing, mobile, handleSave]);
 
   const handleCancel = () => {
     setMobile(currentMobile);

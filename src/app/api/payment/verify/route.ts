@@ -3,6 +3,8 @@ import { connectToDatabase } from "@/lib/db";
 import { PaymentRequest } from "@/lib/db/models/payment.model";
 import { Invoice } from "@/lib/db/models/invoice.model";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
