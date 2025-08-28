@@ -40,8 +40,8 @@ export const generateId = () =>
   Array.from({ length: 24 }, () => Math.floor(Math.random() * 10)).join("");
 
 // ===== Currency: TRY → Toman (fixed rate) =====
-// 1 TRY = 3000 Toman (fixed)
-export const TRY_TO_TOMAN_RATE = 3000;
+// 1 TRY = 3200 Toman (fixed)
+export const TRY_TO_TOMAN_RATE = 3200;
 
 export function convertTRYToToman(tryAmount: number): number {
   if (!Number.isFinite(tryAmount)) return 0;
